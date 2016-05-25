@@ -1,7 +1,7 @@
 # Личный проект «Кекстаграм» [![Build status][travis-image]][travis-url] [![Dependency status][dependency-image]][dependency-url]
 
 * Студент: [Сергей Рубец](https://up.htmlacademy.ru/javascript/5/user/41580).
-* Наставник: `Неизвестно`.
+* Наставник: [Михаил Баранов](https://htmlacademy.ru/profile/id14760).
 
 ---
 
