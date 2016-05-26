@@ -16,9 +16,7 @@ function getMessage(a, b) {
 
     return 'Общая площадь артефактов сжатия: ' + square +  'пикселей';
   } else if (a instanceof Array) {
-    var sum = sumArray(a);
-
-    return 'Количество красных точек во всех строчках изображения: ' + sum;
+    return 'Количество красных точек во всех строчках изображения: ' + sumArray(a);
   }
 
   function sumArray(arr) {
