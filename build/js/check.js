@@ -14,16 +14,16 @@ function getMessage(a, b) {
   } else if (a instanceof Array) {
     return 'Количество красных точек во всех строчках изображения: ' + sumArray(a);
   }
+}
 
-  function sumArray(arr) {
-    return arr.reduce(function(sum, current) {
-      return sum + current;
-    });
-  }
+function sumArray(arr) {
+  return arr.reduce(function(sum, current) {
+    return sum + current;
+  });
+}
 
-  function multiplyArrays(arrA, arrB) {
-    return a.reduce(function(res, current, index) {
-      return res + (current * b[index]);
-    });
-  }
+function multiplyArrays(arrA, arrB) {
+  return arrA.reduce(function(res, current, index) {
+    return res + (current * arrB[index]);
+  });
 }
