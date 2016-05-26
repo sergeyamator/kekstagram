@@ -11,15 +11,19 @@ function getMessage(a, b) {
     return 'Переданное SVG-изображение содержит ' + a + ' объектов и ' + (b * 4) + ' атрибутов';
   } else if ((a instanceof Array) && (b instanceof Array)) {
     var square = a.reduce(function(res, current, index) {
-      return res + (curr * b[index]);
+      return res + (current * b[index]);
     });
 
     return 'Общая площадь артефактов сжатия: ' + square +  'пикселей';
   } else if (a instanceof Array) {
-    var sum = a.reduce(function(sum, current) {
-      return sum + current;
-    });
+    var sum = sumArray(a);
 
     return 'Количество красных точек во всех строчках изображения: ' + sum;
+  }
+
+  function sumArray(arr) {
+    return arr.reduce(function(sum, current) {
+      return sum + current;
+    });
   }
 }
