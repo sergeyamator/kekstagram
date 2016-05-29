@@ -127,6 +127,15 @@
       // некорректно сработает даже очистка холста или нужно будет использовать
       // сложные рассчеты для координат прямоугольника, который нужно очистить.
       this._ctx.restore();
+
+      this._ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
+      this._ctx.rect(0, 0, 480, 360);
+      this._ctx.rect(100, 40, 273, 280);
+      this._ctx.fill('evenodd');
+
+      this._ctx.font = '12px Tahoma';
+      this._ctx.fillStyle = 'white';
+      this._ctx.fillText(this._image.naturalWidth + ' x ' + this._image.naturalWidth, 215, 35);
     },
 
     /**
