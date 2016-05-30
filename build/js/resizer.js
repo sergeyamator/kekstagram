@@ -76,6 +76,12 @@
      */
     _resizeConstraint: null,
 
+    _drawCanvasDots: function(ctx, x, y, radius) {
+      ctx.fillStyle = 'yellow';
+      ctx.beginPath();
+      ctx.arc(x, y, radius, 0, 2 * Math.PI);
+      ctx.fill();
+    },
     /**
      * Отрисовка канваса.
      */
@@ -119,6 +125,13 @@
           (-this._resizeConstraint.side / 2) - this._ctx.lineWidth / 2,
           this._resizeConstraint.side - this._ctx.lineWidth / 2,
           this._resizeConstraint.side - this._ctx.lineWidth / 2);
+
+      var dotRadius = 5,
+        x = -this._resizeConstraint.side / 2,
+        y = -this._resizeConstraint.side / 2;
+      for (; x < this._resizeConstraint.side / 2; x += (dotRadius + 10)) {
+        this._drawCanvasDots(this._ctx, x / 2, y, 5);
+      }
 
       // Восстановление состояния канваса, которое было до вызова ctx.save
       // и последующего изменения системы координат. Нужно для того, чтобы
