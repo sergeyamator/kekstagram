@@ -75,19 +75,27 @@
      * @private
      */
     _resizeConstraint: null,
-
-    _drawCanvasDots: function(ctx, x, y, radius) {
-      ctx.fillStyle = 'yellow';
-      ctx.beginPath();
-      ctx.arc(x, y, radius, 0, 2 * Math.PI);
-      ctx.fill();
-    },
     /**
      * Отрисовка канваса.
      */
     redraw: function() {
       // Очистка изображения.
       this._ctx.clearRect(0, 0, this._container.width, this._container.height);
+
+      // Параметры линии.
+      // NB! Такие параметры сохраняются на время всего процесса отрисовки
+      // canvas'a поэтому важно вовремя поменять их, если нужно начать отрисовку
+      // чего-либо с другой обводкой.
+
+      // Толщина линии.
+      this._ctx.lineWidth = 6;
+      // Цвет обводки.
+      this._ctx.strokeStyle = '#ffe753';
+      // Размер штрихов. Первый элемент массива задает длину штриха, второй
+      // расстояние между соседними штрихами.
+      this._ctx.setLineDash([15, 10]);
+      // Смещение первого штриха от начала линии.
+      this._ctx.lineDashOffset = 7;
 
       // Сохранение состояния канваса.
       // Подробней см. строку 132.
@@ -105,50 +113,24 @@
 
       // Отрисовка прямоугольника, обозначающего область изображения после
       // кадрирования. Координаты задаются от центра.
+      this._ctx.strokeRect(
+          (-this._resizeConstraint.side / 2) - this._ctx.lineWidth / 2,
+          (-this._resizeConstraint.side / 2) - this._ctx.lineWidth / 2,
+          this._resizeConstraint.side - this._ctx.lineWidth / 2,
+          this._resizeConstraint.side - this._ctx.lineWidth / 2);
 
-
-      var dotRadius = 5,
-        distance = 4,
-      // Отрисовуем на верхней линии точки
-        x = -this._resizeConstraint.side / 2,
-        y = -this._resizeConstraint.side / 2;
-      for (; x <= this._resizeConstraint.side / 2; x += (dotRadius + dotRadius * distance)) {
-        this._drawCanvasDots(this._ctx, x, y, dotRadius);
-      }
-      // Отрисовуем на левой линии точки
-      x = -this._resizeConstraint.side / 2;
-      y = -this._resizeConstraint.side / 2;
-      for (; y <= this._resizeConstraint.side / 2; y += (dotRadius + dotRadius * distance)) {
-        this._drawCanvasDots(this._ctx, x, y, dotRadius);
-      }
-      // Отрисовуем на нижней линии точки
-      x = -this._resizeConstraint.side / 2;
-      y = this._resizeConstraint.side / 2;
-      for (; x <= this._resizeConstraint.side / 2; x += (dotRadius + dotRadius * distance)) {
-        this._drawCanvasDots(this._ctx, x, y, dotRadius);
-      }
-      // Отрисовуем на нижней линии точки
-      x = this._resizeConstraint.side / 2;
-      y = -this._resizeConstraint.side / 2;
-
-      for (; y <= this._resizeConstraint.side / 2; y += (dotRadius + dotRadius * distance)) {
-        this._drawCanvasDots(this._ctx, x, y, dotRadius);
-      }
       // Восстановление состояния канваса, которое было до вызова ctx.save
       // и последующего изменения системы координат. Нужно для того, чтобы
       // следующий кадр рисовался с привычной системой координат, где точка
       // 0 0 находится в левом верхнем углу холста, в противном случае
       // некорректно сработает даже очистка холста или нужно будет использовать
       // сложные рассчеты для координат прямоугольника, который нужно очистить.
-
-
       this._ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
       this._ctx.rect(displX, displY, this._container.width, this._container.height);
 
       this._ctx.rect(-this._resizeConstraint.side / 2, -this._resizeConstraint.side / 2, this._resizeConstraint.side, this._resizeConstraint.side);
       this._ctx.fill('evenodd');
       this._ctx.font = '12px Tahoma';
-
       this._ctx.fillStyle = 'white';
       this._ctx.fillText(this._image.naturalWidth + ' x ' + this._image.naturalWidth, -25, -this._resizeConstraint.side / 2 - 15);
       this._ctx.restore();
