@@ -76,13 +76,6 @@
      */
     _resizeConstraint: null,
 
-    _drawCanvasDots: function(ctx, x, y, radius) {
-      ctx.fillStyle = 'yellow';
-      ctx.beginPath();
-      ctx.arc(x, y, radius, 0, 2 * Math.PI);
-      ctx.fill();
-    },
-
     /**
      * Отрисовка канваса.
      */
@@ -111,39 +104,81 @@
       this._ctx.fill('evenodd');
 
       // Отрисовываем рамку в виде точек по периметру
-      var dotRadius = 5,
-        distance = 4, //distance between dots
+      var size = 16,
         x = -this._resizeConstraint.side / 2,
         y = -this._resizeConstraint.side / 2;
 
-      // Отрисовуем на верхней линии точки
-      for (; x <= this._resizeConstraint.side / 2; x += (dotRadius + dotRadius * distance)) {
-        this._drawCanvasDots(this._ctx, x, y, dotRadius);
+      this._ctx.beginPath();
+      this._ctx.strokeStyle = 'yellow';
+      this._ctx.lineWidth = 2;
+
+      // Отрисовываем зигзаг по верху
+      this._ctx.moveTo(x, y + size);
+      var count = 1;
+
+      while (x < this._resizeConstraint.side / 2) {
+        if (count % 2 === 0) {
+          this._ctx.lineTo(x + size / 2, y + size);
+        } else {
+          this._ctx.lineTo(x + size / 2, y);
+        }
+
+        count++;
+        x += size;
       }
 
-      // Отрисовуем на левой линии точки
-      x = -this._resizeConstraint.side / 2;
-      y = -this._resizeConstraint.side / 2;
-
-      for (; y <= this._resizeConstraint.side / 2; y += (dotRadius + dotRadius * distance)) {
-        this._drawCanvasDots(this._ctx, x, y, dotRadius);
-      }
-
-      // Отрисовуем на нижней линии точки
-      x = -this._resizeConstraint.side / 2;
-      y = this._resizeConstraint.side / 2;
-
-      for (; x <= this._resizeConstraint.side / 2; x += (dotRadius + dotRadius * distance)) {
-        this._drawCanvasDots(this._ctx, x, y, dotRadius);
-      }
-
-      // Отрисовуем на нижней линии точки
+      // Отрисовываем зигзаг по правой стороне
       x = this._resizeConstraint.side / 2;
       y = -this._resizeConstraint.side / 2;
 
-      for (; y <= this._resizeConstraint.side / 2; y += (dotRadius + dotRadius * distance)) {
-        this._drawCanvasDots(this._ctx, x, y, dotRadius);
+      count = 1;
+
+      while (y < this._resizeConstraint.side / 2) {
+        if (count % 2 === 0) {
+          this._ctx.lineTo(x, y + size);
+        } else {
+          this._ctx.lineTo(x + size, y + size);
+        }
+
+        count++;
+        y += size;
       }
+
+      // Отрисовываем зигзаг по низу
+      x = this._resizeConstraint.side / 2;
+      y = this._resizeConstraint.side / 2;
+
+      count = 1;
+
+      while (x > -this._resizeConstraint.side / 2) {
+        if (count % 2 === 0) {
+          this._ctx.lineTo(x, y);
+        } else {
+          this._ctx.lineTo(x, y + size);
+        }
+
+        count++;
+        x -= size;
+      }
+
+      // Отрисовываем зигзаг слева
+      x = -this._resizeConstraint.side / 2;
+      y = this._resizeConstraint.side / 2;
+
+      count = 1;
+
+      while (y > -this._resizeConstraint.side / 2) {
+        if (count % 2 === 0) {
+          this._ctx.lineTo(x + size, y);
+        } else {
+          this._ctx.lineTo(x, y);
+        }
+
+        count++;
+        y -= size;
+      }
+
+      this._ctx.stroke();
       // Восстановление состояния канваса, которое было до вызова ctx.save
       // и последующего изменения системы координат. Нужно для того, чтобы
       // следующий кадр рисовался с привычной системой координат, где точка
