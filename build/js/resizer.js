@@ -82,6 +82,7 @@
       ctx.arc(x, y, radius, 0, 2 * Math.PI);
       ctx.fill();
     },
+
     /**
      * Отрисовка канваса.
      */
@@ -103,30 +104,39 @@
       // Координаты задаются от центра холста.
       this._ctx.drawImage(this._image, displX, displY);
 
-      // Отрисовка прямоугольника, обозначающего область изображения после
-      // кадрирования. Координаты задаются от центра.
+      this._ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
+      this._ctx.rect(displX, displY, this._container.width, this._container.height);
 
+      this._ctx.rect(-this._resizeConstraint.side / 2, -this._resizeConstraint.side / 2, this._resizeConstraint.side, this._resizeConstraint.side);
+      this._ctx.fill('evenodd');
 
+      // Отрисовываем рамку в виде точек по периметру
       var dotRadius = 5,
-        distance = 4,
-      // Отрисовуем на верхней линии точки
+        distance = 4, //distance between dots
         x = -this._resizeConstraint.side / 2,
         y = -this._resizeConstraint.side / 2;
+
+      // Отрисовуем на верхней линии точки
       for (; x <= this._resizeConstraint.side / 2; x += (dotRadius + dotRadius * distance)) {
         this._drawCanvasDots(this._ctx, x, y, dotRadius);
       }
+
       // Отрисовуем на левой линии точки
       x = -this._resizeConstraint.side / 2;
       y = -this._resizeConstraint.side / 2;
+
       for (; y <= this._resizeConstraint.side / 2; y += (dotRadius + dotRadius * distance)) {
         this._drawCanvasDots(this._ctx, x, y, dotRadius);
       }
+
       // Отрисовуем на нижней линии точки
       x = -this._resizeConstraint.side / 2;
       y = this._resizeConstraint.side / 2;
+
       for (; x <= this._resizeConstraint.side / 2; x += (dotRadius + dotRadius * distance)) {
         this._drawCanvasDots(this._ctx, x, y, dotRadius);
       }
+
       // Отрисовуем на нижней линии точки
       x = this._resizeConstraint.side / 2;
       y = -this._resizeConstraint.side / 2;
@@ -141,15 +151,10 @@
       // некорректно сработает даже очистка холста или нужно будет использовать
       // сложные рассчеты для координат прямоугольника, который нужно очистить.
 
-
-      this._ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
-      this._ctx.rect(displX, displY, this._container.width, this._container.height);
-
-      this._ctx.rect(-this._resizeConstraint.side / 2, -this._resizeConstraint.side / 2, this._resizeConstraint.side, this._resizeConstraint.side);
-      this._ctx.fill('evenodd');
+      // Отрисовываем размеры изображения в виде текста сверху
       this._ctx.font = '12px Tahoma';
-
       this._ctx.fillStyle = 'white';
+
       this._ctx.fillText(this._image.naturalWidth + ' x ' + this._image.naturalWidth, -25, -this._resizeConstraint.side / 2 - 15);
       this._ctx.restore();
     },
