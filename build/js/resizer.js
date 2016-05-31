@@ -75,6 +75,7 @@
      * @private
      */
     _resizeConstraint: null,
+
     /**
      * Отрисовка канваса.
      */
@@ -111,6 +112,11 @@
       // Координаты задаются от центра холста.
       this._ctx.drawImage(this._image, displX, displY);
 
+      this._ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
+      this._ctx.rect(displX, displY, this._container.width, this._container.height);
+      this._ctx.rect(-this._resizeConstraint.side / 2, -this._resizeConstraint.side / 2, this._resizeConstraint.side - 10, this._resizeConstraint.side - 10);
+      this._ctx.fill('evenodd');
+
       // Отрисовка прямоугольника, обозначающего область изображения после
       // кадрирования. Координаты задаются от центра.
       this._ctx.strokeRect(
@@ -125,11 +131,7 @@
       // 0 0 находится в левом верхнем углу холста, в противном случае
       // некорректно сработает даже очистка холста или нужно будет использовать
       // сложные рассчеты для координат прямоугольника, который нужно очистить.
-      this._ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
-      this._ctx.rect(displX, displY, this._container.width, this._container.height);
 
-      this._ctx.rect(-this._resizeConstraint.side / 2, -this._resizeConstraint.side / 2, this._resizeConstraint.side, this._resizeConstraint.side);
-      this._ctx.fill('evenodd');
       this._ctx.font = '12px Tahoma';
       this._ctx.fillStyle = 'white';
       this._ctx.fillText(this._image.naturalWidth + ' x ' + this._image.naturalWidth, -25, -this._resizeConstraint.side / 2 - 15);
