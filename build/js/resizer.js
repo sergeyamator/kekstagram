@@ -150,7 +150,7 @@
       this._ctx.font = '12px Tahoma';
 
       this._ctx.fillStyle = 'white';
-      this._ctx.fillText(this._image.naturalWidth + ' x ' + this._image.naturalWidth, 215, 35);
+      this._ctx.fillText(this._image.naturalWidth + ' x ' + this._image.naturalWidth, -25, -this._resizeConstraint.side / 2 - 15);
       this._ctx.restore();
     },
 
