@@ -88,7 +88,6 @@
     // Сумма значений полей «сверху» и «сторона» не должна быть больше высоты исходного изображения.
     // Поля «сверху» и «слева» не могут быть отрицательными.
 
-    console.log(Number(resizeXField.value) + Number(resizeSize.value) > currentResizer._image.naturalWidth);
     if ((Number(resizeXField.value) + Number(resizeSize.value) > currentResizer._image.naturalWidth)
       || (Number(resizeYField.value) + Number(resizeSize.value) > currentResizer._image.naturalHeight)
       || (Number(resizeXField.value) < 0)
