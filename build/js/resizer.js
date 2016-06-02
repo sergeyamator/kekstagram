@@ -112,9 +112,15 @@
       // Координаты задаются от центра холста.
       this._ctx.drawImage(this._image, displX, displY);
 
+      // Создаём отдельный изолированый контур для рисования оверлея
+      // Это нужно для того, чтобы заливка методом evenodd не затрагивала
+      // отстальные части канваса
+      this._ctx.beginPath();
       this._ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
       this._ctx.rect(displX, displY, this._container.width, this._container.height);
       this._ctx.rect(-this._resizeConstraint.side / 2, -this._resizeConstraint.side / 2, this._resizeConstraint.side - 10, this._resizeConstraint.side - 10);
+      // Закрываем контур и заливаем его
+      this._ctx.closePath();
       this._ctx.fill('evenodd');
 
       // Отрисовка прямоугольника, обозначающего область изображения после
