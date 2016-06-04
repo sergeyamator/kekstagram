@@ -68,10 +68,11 @@
   }
 
   var form = document.querySelector('#upload-resize'),
-    inputs = form.querySelectorAll('input');
+    inputs = form.querySelectorAll('input'),
+    submitButton = form.querySelector('#resize-fwd');
 
   for (var i = 0; i < inputs.length; i++) {
-    inputs[i].addEventListener('input', resizeFormIsValid);
+    inputs[i].addEventListener('input', blockSubmitIfNotValid);
   }
   /**
    * Проверяет, валидны ли данные, в форме кадрирования.
@@ -80,8 +81,7 @@
   function resizeFormIsValid() {
     var resizeXField = form.querySelector('#resize-x'),
       resizeYField = form.querySelector('#resize-y'),
-      resizeSize = form.querySelector('#resize-size'),
-      submitButton = form.querySelector('#resize-fwd');
+      resizeSize = form.querySelector('#resize-size');
 
     // Проверяем введенные значения на следующие критерии:
     // Сумма значений полей «слева» и «сторона» не должна быть больше ширины исходного изображения.
@@ -93,15 +93,17 @@
       || (Number(resizeXField.value) < 0)
       || (Number(resizeYField.value) < 0)) {
 
-      submitButton.setAttribute('disabled', 'true');
-      submitButton.classList.add('js-disabled');
-
       return false;
     } else {
-      submitButton.removeAttribute('disabled');
-      submitButton.classList.remove('js-disabled');
-
       return true;
+    }
+  }
+
+  function blockSubmitIfNotValid() {
+    if (!resizeFormIsValid()) {
+      submitButton.setAttribute('disabled', 'true');
+    } else {
+      submitButton.removeAttribute('disabled');
     }
   }
 
