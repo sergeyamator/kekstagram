@@ -559,7 +559,7 @@ input[type=radio]:checked + .upload-filter-label {
 }
 
 .likes-count {
-  cursor: pointre;
+  cursor: pointer;
 }
 
 .likes-count:before {
@@ -578,4 +578,9 @@ input[type=radio]:checked + .upload-filter-label {
 
 .likes-count-liked:before {
   background-position-x: -18px;
+}
+
+button[disabled] {
+  opacity: 0.5;
+  cursor: auto;
 }

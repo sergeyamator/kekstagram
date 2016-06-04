@@ -67,12 +67,44 @@
     backgroundElement.style.backgroundImage = 'url(' + images[randomImageNumber] + ')';
   }
 
+  var form = document.querySelector('#upload-resize'),
+    inputs = form.querySelectorAll('input'),
+    submitButton = form.querySelector('#resize-fwd');
+
+  for (var i = 0; i < inputs.length; i++) {
+    inputs[i].addEventListener('input', blockSubmitIfNotValid);
+  }
   /**
    * Проверяет, валидны ли данные, в форме кадрирования.
    * @return {boolean}
    */
   function resizeFormIsValid() {
-    return true;
+    var resizeXField = form.querySelector('#resize-x'),
+      resizeYField = form.querySelector('#resize-y'),
+      resizeSize = form.querySelector('#resize-size');
+
+    // Проверяем введенные значения на следующие критерии:
+    // Сумма значений полей «слева» и «сторона» не должна быть больше ширины исходного изображения.
+    // Сумма значений полей «сверху» и «сторона» не должна быть больше высоты исходного изображения.
+    // Поля «сверху» и «слева» не могут быть отрицательными.
+
+    if ((Number(resizeXField.value) + Number(resizeSize.value) > currentResizer._image.naturalWidth)
+      || (Number(resizeYField.value) + Number(resizeSize.value) > currentResizer._image.naturalHeight)
+      || (Number(resizeXField.value) < 0)
+      || (Number(resizeYField.value) < 0)) {
+
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  function blockSubmitIfNotValid() {
+    if (!resizeFormIsValid()) {
+      submitButton.setAttribute('disabled', 'true');
+    } else {
+      submitButton.removeAttribute('disabled');
+    }
   }
 
   /**
