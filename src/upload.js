@@ -289,12 +289,13 @@ var browserCookies = require('browser-cookies');
     filterImage.className = 'filter-image-preview ' + filterMap[selectedFilter];
   };
 
+  // Сохраняем последний выбранный фильтр в куку.
   function saveSelectedFilter() {
     var dateToExpire = new Date(Date.now() + amountDaysFromBirthday()).toUTCString();
-    console.log(dateToExpire);
-    document.cookie = 'filter=' + document.querySelector('.filter-image-preview').classList[1] + ';expires=' + dateToExpire;
+    document.cookie = 'value=' + document.querySelector('.upload-filter-controls input:checked').value + ';expires=' + dateToExpire;
   }
 
+  // Узнаем разницу от между текущей даты и датой днем рождения.
   function amountDaysFromBirthday() {
     var now = new Date(),
       dateBirthday = new Date(now.getFullYear() + '-12-24'),
@@ -308,6 +309,18 @@ var browserCookies = require('browser-cookies');
     return difference;
   }
 
+  // Устанавливаем фильтр по-умолчанию основываясь на записях в куки.
+  function setActiveFilter() {
+    var controls = document.querySelector('.upload-filter-controls'),
+      filterName = browserCookies.get('value') || 'none',
+      filter = controls.querySelector('#upload-filter-' + filterName),
+      img = document.querySelector('.filter-image-preview');
+
+    filter.setAttribute('checked', true);
+    img.classList.add('filter-' + filterName);
+  }
+
+  setActiveFilter();
   cleanupResizer();
   updateBackground();
 })();
