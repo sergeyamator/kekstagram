@@ -6,6 +6,7 @@
  */
 
 'use strict';
+var browserCookies = require('browser-cookies');
 
 (function() {
   /** @enum {string} */
@@ -258,6 +259,8 @@
 
     filterForm.classList.add('invisible');
     uploadForm.classList.remove('invisible');
+
+    saveSelectedFilter();
   };
 
   /**
@@ -285,6 +288,25 @@
     // состояние или просто перезаписывать.
     filterImage.className = 'filter-image-preview ' + filterMap[selectedFilter];
   };
+
+  function saveSelectedFilter() {
+    var dateToExpire = new Date(Date.now() + amountDaysFromBirthday()).toUTCString();
+    console.log(dateToExpire);
+    document.cookie = 'filter=' + document.querySelector('.filter-image-preview').classList[1] + ';expires=' + dateToExpire;
+  }
+
+  function amountDaysFromBirthday() {
+    var now = new Date(),
+      dateBirthday = new Date(now.getFullYear() + '-12-24'),
+      difference = 0;
+
+    if (now > dateBirthday) {
+      difference = now - dateBirthday;
+    } else {
+      difference = now - dateBirthday.setFullYear(now.getFullYear() - 1);
+    }
+    return difference;
+  }
 
   cleanupResizer();
   updateBackground();
