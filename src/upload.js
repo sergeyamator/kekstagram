@@ -291,8 +291,10 @@ var browserCookies = require('browser-cookies');
 
   // Сохраняем последний выбранный фильтр в куку.
   function saveSelectedFilter() {
-    var dateToExpire = new Date(Date.now() + amountDaysFromBirthday()).toUTCString();
-    document.cookie = 'value=' + document.querySelector('.upload-filter-controls input:checked').value + ';expires=' + dateToExpire;
+    var dateToExpire = new Date(Date.now() + amountDaysFromBirthday()).toUTCString(),
+      value = document.querySelector('.upload-filter-controls input:checked').value;
+
+    browserCookies.set('value', value, {expires: dateToExpire});
   }
 
   // Узнаем разницу от между текущей даты и датой днем рождения.
@@ -313,6 +315,7 @@ var browserCookies = require('browser-cookies');
     } else {
       difference = now - dateBirthday.setFullYear(now.getFullYear() - 1);
     }
+
     return difference;
   }
 
