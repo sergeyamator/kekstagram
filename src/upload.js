@@ -298,8 +298,15 @@ var browserCookies = require('browser-cookies');
   // Узнаем разницу от между текущей даты и датой днем рождения.
   function amountDaysFromBirthday() {
     var now = new Date(),
-      dateBirthday = new Date(now.getFullYear() + '-12-24'),
+      birthdayDate = 24,
+      birthdayMonth = 11,
+      dateBirthday = new Date(),
       difference = 0;
+
+    // Задаем дату рождения
+    dateBirthday.setFullYear(now.getFullYear());
+    dateBirthday.setMonth(birthdayMonth);
+    dateBirthday.setDate(birthdayDate);
 
     if (now > dateBirthday) {
       difference = now - dateBirthday;
