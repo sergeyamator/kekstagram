@@ -6,6 +6,7 @@
  */
 
 'use strict';
+var browserCookies = require('browser-cookies');
 
 (function() {
   /** @enum {string} */
@@ -258,6 +259,8 @@
 
     filterForm.classList.add('invisible');
     uploadForm.classList.remove('invisible');
+
+    saveSelectedFilter();
   };
 
   /**
@@ -286,6 +289,45 @@
     filterImage.className = 'filter-image-preview ' + filterMap[selectedFilter];
   };
 
+  // Сохраняем последний выбранный фильтр в куку.
+  function saveSelectedFilter() {
+    var dateToExpire = new Date(Date.now() + amountDaysFromBirthday({month: 11, day: 24})),
+      value = document.querySelector('.upload-filter-controls input:checked').value;
+
+    browserCookies.set('value', value, {expires: dateToExpire});
+  }
+
+  // Узнаем разницу от между текущей даты и датой днем рождения.
+  function amountDaysFromBirthday(date) {
+    var now = new Date(),
+      dateBirthday = new Date(),
+      difference = 0;
+
+    // Задаем дату рождения
+    dateBirthday.setMonth(date.month);
+    dateBirthday.setDate(date.day);
+
+    if (now > dateBirthday) {
+      difference = now - dateBirthday;
+    } else {
+      difference = now - dateBirthday.setFullYear(now.getFullYear() - 1);
+    }
+
+    return difference;
+  }
+
+  // Устанавливаем фильтр по-умолчанию основываясь на записях в куки.
+  function setActiveFilter() {
+    var controls = document.querySelector('.upload-filter-controls'),
+      filterName = browserCookies.get('value') || 'none',
+      filter = controls.querySelector('#upload-filter-' + filterName),
+      img = document.querySelector('.filter-image-preview');
+
+    filter.setAttribute('checked', true);
+    img.classList.add('filter-' + filterName);
+  }
+
+  setActiveFilter();
   cleanupResizer();
   updateBackground();
 })();
