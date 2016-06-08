@@ -291,24 +291,21 @@ var browserCookies = require('browser-cookies');
 
   // Сохраняем последний выбранный фильтр в куку.
   function saveSelectedFilter() {
-    var dateToExpire = new Date(Date.now() + amountDaysFromBirthday()).toUTCString(),
+    var dateToExpire = new Date(Date.now() + amountDaysFromBirthday({month: 11, day: 24})),
       value = document.querySelector('.upload-filter-controls input:checked').value;
 
     browserCookies.set('value', value, {expires: dateToExpire});
   }
 
   // Узнаем разницу от между текущей даты и датой днем рождения.
-  function amountDaysFromBirthday() {
+  function amountDaysFromBirthday(date) {
     var now = new Date(),
-      birthdayDate = 24,
-      birthdayMonth = 11,
       dateBirthday = new Date(),
       difference = 0;
 
     // Задаем дату рождения
-    dateBirthday.setFullYear(now.getFullYear());
-    dateBirthday.setMonth(birthdayMonth);
-    dateBirthday.setDate(birthdayDate);
+    dateBirthday.setMonth(date.month);
+    dateBirthday.setDate(date.day);
 
     if (now > dateBirthday) {
       difference = now - dateBirthday;
