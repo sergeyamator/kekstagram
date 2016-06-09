@@ -78,15 +78,27 @@
   </div>
 </div>
 
-<template id="picture-template">
+<template id="picture-template" style="display: none">
   <a href="" class="picture">
-    <img src="" width="182" height="182">
     <span class="picture-stats">
       <span class="picture-stat picture-comments"></span>
       <span class="picture-stat picture-likes"></span>
     </span>
   </a>
 </template>
+<script>
+  var pictures = [];
+
+  /**
+   *
+   * @param {array} data
+   * @private
+   */
+  function __picturesLoadCallback(data) {
+    pictures = data;
+  }
+</script>
+<script src="//up.htmlacademy.ru/assets/js_intensive/jsonp/pictures.js"></script>
 <script src="js/main.js"></script>
 </body>
 </html>
