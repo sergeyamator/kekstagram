@@ -1,5 +1,7 @@
 'use strict';
 
+var PICTURES_LOAD_URL = 'http://o0.github.io/assets/json/pictures.json';
+
 var filters = document.querySelector('.filters'),
   pictureContainer = document.querySelector('.pictures'),
   pictureTmpl = document.querySelector('#picture-template'),
@@ -45,6 +47,34 @@ if (supportsTemplate()) {
 } else {
   elementToClone = pictureTmpl.querySelector('.picture');
 }
-window.pictures.forEach(function(picture) {
-  getPictureElement(picture, pictureContainer);
+
+/**
+ *
+ * @param {function(Array.<Object>)} callback
+ */
+function getPictures(callback) {
+  var xhr = new XMLHttpRequest();
+
+  xhr.addEventListener('load', function(evt) {
+    var loadedData = JSON.parse(evt.target.response);
+    callback(loadedData);
+  });
+
+  xhr.open('GET', PICTURES_LOAD_URL);
+  xhr.send();
+}
+
+getPictures(function(loadedPictures) {
+  window.pictures = loadedPictures;
+  renderPictures(window.pictures);
 });
+
+/**
+ *
+ * @param {Array.<Object>} pictures
+ */
+function renderPictures(pictures) {
+  pictures.forEach(function(picture) {
+    getPictureElement(picture, pictureContainer);
+  });
+}
