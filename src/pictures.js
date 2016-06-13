@@ -1,6 +1,6 @@
 'use strict';
 
-var PICTURES_LOAD_URL = 'http://o0.github.io/assets/json/pictures.json';
+var PICTURES_LOAD_URL = 'https://o0.github.io/assets/json/pictures.json';
 
 var filters = document.querySelector('.filters'),
   pictureContainer = document.querySelector('.pictures'),
