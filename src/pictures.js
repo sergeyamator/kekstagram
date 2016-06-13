@@ -60,8 +60,21 @@ function getPictures(callback) {
     var loadedData = JSON.parse(evt.target.response);
     callback(loadedData);
 
-    pictures.classList.remove('pictures-loading');
     filters.classList.remove('hidden');
+  });
+
+  /**
+   * If error add error class
+   */
+  xhr.addEventListener('error', function() {
+    pictures.classList.add('pictures-failure');
+  });
+
+  /**
+   * Hide preloader
+   */
+  xhr.addEventListener('loadend', function() {
+    pictures.classList.remove('pictures-loading');
   });
 
   xhr.open('GET', PICTURES_LOAD_URL);
@@ -69,9 +82,7 @@ function getPictures(callback) {
 
   pictures.classList.add('pictures-loading');
 
-  xhr.addEventListener('error', function() {
-    pictures.classList.add('pictures-failure');
-  });
+
 }
 
 getPictures(function(loadedPictures) {
