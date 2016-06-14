@@ -1,6 +1,6 @@
 'use strict';
 
-var PICTURES_LOAD_URL = 'https://o0.github.io/assets/json/pictures.json';
+var PICTURES_LOAD_URL = '//o0.github.io/assets/json/pictures.json';
 
 var filters = document.querySelector('.filters'),
   pictureContainer = document.querySelector('.pictures'),
@@ -26,13 +26,9 @@ function getPictureElement(data, container) {
   var element = elementToClone.cloneNode(true),
     img = new Image(182, 182);
 
-  img.addEventListener('load', function() {
-    element.insertBefore(img, element.querySelector('.picture-stats'));
-  });
+  img.addEventListener('load', successLoad);
 
-  img.addEventListener('error', function() {
-    element.classList.add('picture-load-failure');
-  });
+  img.addEventListener('error', errorLoad);
 
   img.src = data.url;
   element.querySelector('.picture-comments').textContent = data.comments;
@@ -40,6 +36,14 @@ function getPictureElement(data, container) {
 
   container.appendChild(element);
   return element;
+
+  function successLoad() {
+    element.insertBefore(img, element.querySelector('.picture-stats'));
+  }
+
+  function errorLoad() {
+    element.classList.add('picture-load-failure');
+  }
 }
 
 if (supportsTemplate()) {
@@ -56,33 +60,37 @@ function getPictures(callback) {
   var xhr = new XMLHttpRequest(),
     pictures = document.querySelector('.pictures');
 
-  xhr.addEventListener('load', function(evt) {
-    var loadedData = JSON.parse(evt.target.response);
-    callback(loadedData);
-
-    filters.classList.remove('hidden');
-  });
+  xhr.addEventListener('load', successRequest);
 
   /**
    * If error add error class
    */
-  xhr.addEventListener('error', function() {
-    pictures.classList.add('pictures-failure');
-  });
+  xhr.addEventListener('error', failedRequest);
 
   /**
    * Hide preloader
    */
-  xhr.addEventListener('loadend', function() {
-    pictures.classList.remove('pictures-loading');
-  });
+  xhr.addEventListener('loadend', removePreloader);
 
   xhr.open('GET', PICTURES_LOAD_URL);
   xhr.send();
 
   pictures.classList.add('pictures-loading');
 
+  function successRequest(evt) {
+    var loadedData = JSON.parse(evt.target.response);
+    callback(loadedData);
 
+    filters.classList.remove('hidden');
+  }
+
+  function removePreloader() {
+    pictures.classList.remove('pictures-loading');
+  }
+
+  function failedRequest() {
+    pictures.classList.add('pictures-failure');
+  }
 }
 
 getPictures(function(loadedPictures) {
@@ -129,7 +137,7 @@ function getFilteredPictures(pictures, filter) {
 
   if (filter === 'filter-new') {
     picturesToFilter.sort(function(a, b) {
-      return new Date(b.date).getTime() - new Date(a.date).getTime();
+      return new Date(b.date) - new Date(a.date);
     });
   }
 
