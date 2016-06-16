@@ -26,9 +26,9 @@ function getPictureElement(data, container) {
   var element = elementToClone.cloneNode(true),
     img = new Image(182, 182);
 
-  img.addEventListener('load', successLoad);
+  img.addEventListener('load', successCallback);
 
-  img.addEventListener('error', errorLoad);
+  img.addEventListener('error', errorCallback);
 
   img.src = data.url;
   element.querySelector('.picture-comments').textContent = data.comments;
@@ -37,11 +37,11 @@ function getPictureElement(data, container) {
   container.appendChild(element);
   return element;
 
-  function successLoad() {
+  function successCallback() {
     element.insertBefore(img, element.querySelector('.picture-stats'));
   }
 
-  function errorLoad() {
+  function errorCallback() {
     element.classList.add('picture-load-failure');
   }
 }
@@ -60,24 +60,24 @@ function getPictures(callback) {
   var xhr = new XMLHttpRequest(),
     pictures = document.querySelector('.pictures');
 
-  xhr.addEventListener('load', successRequest);
+  xhr.addEventListener('load', successRequestCallback);
 
   /**
    * If error add error class
    */
-  xhr.addEventListener('error', failedRequest);
+  xhr.addEventListener('error', failedRequestCallback);
 
   /**
    * Hide preloader
    */
-  xhr.addEventListener('loadend', removePreloader);
+  xhr.addEventListener('loadend', loadEndCallback);
 
   xhr.open('GET', PICTURES_LOAD_URL);
   xhr.send();
 
   pictures.classList.add('pictures-loading');
 
-  function successRequest(evt) {
+  function successRequestCallback(evt) {
     var loadedData = JSON.parse(evt.target.response);
     callback(loadedData);
 
@@ -88,7 +88,11 @@ function getPictures(callback) {
     pictures.classList.remove('pictures-loading');
   }
 
-  function failedRequest() {
+  function loadEndCallback() {
+    removePreloader();
+  }
+
+  function failedRequestCallback() {
     pictures.classList.add('pictures-failure');
   }
 }
