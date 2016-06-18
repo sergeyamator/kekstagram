@@ -2,6 +2,13 @@
 
 var PICTURES_LOAD_URL = '//o0.github.io/assets/json/pictures.json';
 
+/** @constant {number} */
+var PAGE_SIZE = 12;
+
+
+/** @type {number} */
+var pageNumber = 0;
+
 var filters = document.querySelector('.filters'),
   pictureContainer = document.querySelector('.pictures'),
   pictureTmpl = document.querySelector('#picture-template'),
@@ -100,17 +107,20 @@ function getPictures(callback) {
 getPictures(function(loadedPictures) {
   window.pictures = loadedPictures;
   setFiltraionEnabled();
-  renderPictures(window.pictures);
+  renderPictures(window.pictures, 0);
 });
 
 /**
  *
  * @param {Array.<Object>} pictures
  */
-function renderPictures(pictures) {
+function renderPictures(pictures, page) {
   pictureContainer.innerHTML = '';
 
-  pictures.forEach(function(picture) {
+  var from = page * PAGE_SIZE,
+    to = from + PAGE_SIZE;
+
+  pictures.slice(from, to).forEach(function(picture) {
     getPictureElement(picture, pictureContainer);
   });
 }
