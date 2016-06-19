@@ -2,12 +2,16 @@
 
 var PICTURES_LOAD_URL = '//o0.github.io/assets/json/pictures.json';
 
-/** @constant {number} */
-var PAGE_SIZE = 12;
+var DEFAULT_FILTER = 'filter-new';
 
+/** @constant {number} */
+var PAGE_SIZE = 4;
 
 /** @type {number} */
 var pageNumber = 0;
+
+/** @type {Array.<Object>} */
+var filteredPictures = [];
 
 var filters = document.querySelector('.filters'),
   pictureContainer = document.querySelector('.pictures'),
@@ -104,18 +108,58 @@ function getPictures(callback) {
   }
 }
 
+/**
+ *
+ * @param {Array} pictures
+ * @param {number} page
+ * @param {number} pageSize
+ * @returns {boolean}
+ */
+function isNextPageAvailable(pictures, page, pageSize) {
+  return page < Math.ceil(pictures.length / pageSize);
+}
+
+/**
+ *
+ * @returns {boolean}
+ */
+function isBottomReached() {
+  var GAP = 100,
+    footerElement = document.querySelector('footer'),
+    footerPosition = footerElement.getBoundingClientRect();
+
+  return footerPosition.top - window.innerHeight - GAP <= 0;
+}
+
+function setScrollEnabled() {
+  window.addEventListener('scroll', scrollHandler);
+}
+
+function scrollHandler(evt) {
+  if (isBottomReached() &&
+    isNextPageAvailable(window.pictures, pageNumber, PAGE_SIZE)) {
+    pageNumber++;
+    renderPictures(filteredPictures, pageNumber, false);
+  }
+}
+
 getPictures(function(loadedPictures) {
   window.pictures = loadedPictures;
   setFiltraionEnabled();
-  renderPictures(window.pictures, 0);
+  setScrollEnabled();
+  setFilterEnabled(DEFAULT_FILTER);
 });
 
 /**
  *
  * @param {Array.<Object>} pictures
+ * @param {number} page
+ * @param {boolean=} replace
  */
-function renderPictures(pictures, page) {
-  pictureContainer.innerHTML = '';
+function renderPictures(pictures, page, replace) {
+  if (replace) {
+    pictureContainer.innerHTML = '';
+  }
 
   var from = page * PAGE_SIZE,
     to = from + PAGE_SIZE;
@@ -127,6 +171,8 @@ function renderPictures(pictures, page) {
 
 function setFiltraionEnabled() {
   var filtersForm = document.querySelector('.filters');
+  pageNumber = 0;
+  renderPictures(filteredPictures, pageNumber);
 
   filtersForm.addEventListener('change', function(evt) {
     var currentElement = evt.target;
@@ -142,8 +188,9 @@ function setFiltraionEnabled() {
  * @param {string} filter
  */
 function setFilterEnabled(filter) {
-  var filteredPictures = getFilteredPictures(window.pictures, filter);
-  renderPictures(filteredPictures);
+  filteredPictures = getFilteredPictures(window.pictures, filter);
+  pageNumber = 0;
+  renderPictures(filteredPictures, pageNumber, true);
 }
 
 function getFilteredPictures(pictures, filter) {
