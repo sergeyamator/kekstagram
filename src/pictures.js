@@ -5,6 +5,9 @@ var PICTURES_LOAD_URL = '//o0.github.io/assets/json/pictures.json';
 var DEFAULT_FILTER = 'filter-new';
 
 /** @constant {number} */
+var THROTTLE_DELAY = 100;
+
+/** @constant {number} */
 var PAGE_SIZE = 4;
 
 /** @type {number} */
@@ -132,16 +135,23 @@ function isBottomReached() {
 }
 
 function setScrollEnabled() {
+  var lastCall = Date.now();
   window.addEventListener('scroll', scrollHandler);
-}
 
-function scrollHandler(evt) {
-  if (isBottomReached() &&
-    isNextPageAvailable(window.pictures, pageNumber, PAGE_SIZE)) {
-    pageNumber++;
-    renderPictures(filteredPictures, pageNumber, false);
+  function scrollHandler() {
+    if (Date.now() - lastCall >= THROTTLE_DELAY) {
+      if (isBottomReached() &&
+        isNextPageAvailable(window.pictures, pageNumber, PAGE_SIZE)) {
+        pageNumber++;
+        renderPictures(filteredPictures, pageNumber, false);
+      }
+
+      lastCall = Date.now();
+    }
   }
 }
+
+
 
 getPictures(function(loadedPictures) {
   window.pictures = loadedPictures;
