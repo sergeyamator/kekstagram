@@ -8,10 +8,13 @@ var DEFAULT_FILTER = 'filter-new';
 var THROTTLE_DELAY = 100;
 
 /** @constant {number} */
-var PAGE_SIZE = 4;
+var PAGE_SIZE = 12;
 
 /** @type {number} */
 var pageNumber = 0;
+
+/** @type {number} */
+var renderedPictureCount = 0;
 
 /** @type {Array.<Object>} */
 var filteredPictures = [];
@@ -53,10 +56,23 @@ function getPictureElement(data, container) {
 
   function successCallback() {
     element.insertBefore(img, element.querySelector('.picture-stats'));
+    onLoadEndCallback();
   }
 
   function errorCallback() {
     element.classList.add('picture-load-failure');
+    onLoadEndCallback();
+  }
+
+  function onLoadEndCallback() {
+    renderedPictureCount++;
+
+    if (renderedPictureCount === PAGE_SIZE) {
+      if (isBottom()) {
+        renderPictures(filteredPictures, pageNumber, false);
+        renderedPictureCount = 0;
+      }
+    }
   }
 }
 
@@ -136,22 +152,26 @@ function isBottomReached() {
 
 function setScrollEnabled() {
   var lastCall = Date.now();
-  window.addEventListener('scroll', scrollHandler);
+
+  window.addEventListener('scroll', throttle.bind(null, scrollHandler, THROTTLE_DELAY));
 
   function scrollHandler() {
-    if (Date.now() - lastCall >= THROTTLE_DELAY) {
-      if (isBottomReached() &&
-        isNextPageAvailable(window.pictures, pageNumber, PAGE_SIZE)) {
-        pageNumber++;
-        renderPictures(filteredPictures, pageNumber, false);
-      }
-
-      lastCall = Date.now();
+    if (isBottomReached() &&
+      isNextPageAvailable(window.pictures, pageNumber, PAGE_SIZE)) {
+      pageNumber++;
+      renderPictures(filteredPictures, pageNumber, false);
     }
   }
+
+  function throttle(fn, time) {
+    if (Date.now() - lastCall >= time) {
+      console.log('func');
+      fn();
+    }
+
+    lastCall = Date.now();
+  }
 }
-
-
 
 getPictures(function(loadedPictures) {
   window.pictures = loadedPictures;
@@ -172,11 +192,17 @@ function renderPictures(pictures, page, replace) {
   }
 
   var from = page * PAGE_SIZE,
-    to = from + PAGE_SIZE;
+    to = from + PAGE_SIZE,
+    pictureToLoad = pictures.slice(from, to);
 
-  pictures.slice(from, to).forEach(function(picture) {
+  pictureToLoad.forEach(function(picture) {
     getPictureElement(picture, pictureContainer);
   });
+
+}
+
+function isBottom() {
+  return window.innerHeight - document.querySelector('.pictures').offsetHeight > 0;
 }
 
 function setFiltraionEnabled() {
@@ -201,6 +227,10 @@ function setFilterEnabled(filter) {
   filteredPictures = getFilteredPictures(window.pictures, filter);
   pageNumber = 0;
   renderPictures(filteredPictures, pageNumber, true);
+
+  while (isBottom()) {
+    renderPictures(filteredPictures, pageNumber, false);
+  }
 }
 
 function getFilteredPictures(pictures, filter) {
