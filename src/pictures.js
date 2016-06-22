@@ -45,6 +45,22 @@ if (supportsTemplate()) {
 } else {
   elementToClone = pictureTmpl.querySelector('.picture');
 }
-window.pictures.forEach(function(picture) {
-  getPictureElement(picture, pictureContainer);
-});
+
+function jsonpFunction(url, callback) {
+  var element = document.createElement('script');
+  element.src = url;
+  document.body.insertBefore(element, document.body.lastElementChild);
+
+  element.addEventListener('load', function() {
+    callback();
+  });
+}
+
+function renderedAllPictures() {
+  window.pictures.forEach(function(picture) {
+    getPictureElement(picture, pictureContainer);
+  });
+}
+
+jsonpFunction('//up.htmlacademy.ru/assets/js_intensive/jsonp/pictures.js', renderedAllPictures);
+
