@@ -151,9 +151,7 @@ function isBottomReached() {
 }
 
 function setScrollEnabled() {
-  var lastCall = Date.now();
-
-  window.addEventListener('scroll', throttle.bind(null, scrollHandler, THROTTLE_DELAY));
+  window.addEventListener('scroll', throttle(scrollHandler, THROTTLE_DELAY));
 
   function scrollHandler() {
     if (isBottomReached() &&
@@ -162,15 +160,19 @@ function setScrollEnabled() {
       renderPictures(filteredPictures, pageNumber, false);
     }
   }
+}
 
-  function throttle(fn, time) {
-    if (Date.now() - lastCall >= time) {
-      console.log('func');
-      fn();
+function throttle(callback, limit) {
+  var wait = false;
+  return function() {
+    if (!wait) {
+      callback.call();
+      wait = true;
+      setTimeout(function() {
+        wait = false;
+      }, limit);
     }
-
-    lastCall = Date.now();
-  }
+  };
 }
 
 getPictures(function(loadedPictures) {
