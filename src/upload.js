@@ -70,7 +70,10 @@ var browserCookies = require('browser-cookies');
 
   var form = document.querySelector('#upload-resize'),
     inputs = form.querySelectorAll('input'),
-    submitButton = form.querySelector('#resize-fwd');
+    submitButton = form.querySelector('#resize-fwd'),
+    resizeXField = form.querySelector('#resize-x'),
+    resizeYField = form.querySelector('#resize-y'),
+    resizeSize = form.querySelector('#resize-size');
 
   for (var i = 0; i < inputs.length; i++) {
     inputs[i].addEventListener('input', blockSubmitIfNotValid);
@@ -80,10 +83,6 @@ var browserCookies = require('browser-cookies');
    * @return {boolean}
    */
   function resizeFormIsValid() {
-    var resizeXField = form.querySelector('#resize-x'),
-      resizeYField = form.querySelector('#resize-y'),
-      resizeSize = form.querySelector('#resize-size');
-
     // Проверяем введенные значения на следующие критерии:
     // Сумма значений полей «слева» и «сторона» не должна быть больше ширины исходного изображения.
     // Сумма значений полей «сверху» и «сторона» не должна быть больше высоты исходного изображения.
@@ -325,6 +324,14 @@ var browserCookies = require('browser-cookies');
 
     filter.setAttribute('checked', true);
     img.classList.add('filter-' + filterName);
+  }
+
+  window.addEventListener('resizerchange', onResizerChange);
+
+  function onResizerChange() {
+    resizeXField.value = Math.round(currentResizer.getConstraint().x);
+    resizeYField.value = Math.round(currentResizer.getConstraint().y);
+    resizeSize.value = Math.round(currentResizer.getConstraint().side);
   }
 
   setActiveFilter();
