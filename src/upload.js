@@ -192,6 +192,7 @@ var browserCookies = require('browser-cookies');
           resizeForm.classList.remove('invisible');
 
           hideMessage();
+          enableConstraintByInputEvent();
         };
 
         fileReader.readAsDataURL(element.files[0]);
@@ -328,10 +329,43 @@ var browserCookies = require('browser-cookies');
 
   window.addEventListener('resizerchange', onResizerChange);
 
+  /**
+   * При событии resizerchange выводим значения X, Y, Side в
+   * соответствующие поля фомы
+   */
   function onResizerChange() {
     resizeXField.value = Math.round(currentResizer.getConstraint().x);
     resizeYField.value = Math.round(currentResizer.getConstraint().y);
     resizeSize.value = Math.round(currentResizer.getConstraint().side);
+  }
+
+  function enableConstraintByInputEvent() {
+    var controls = document.querySelector('.upload-resize-controls');
+    if (!controls) {
+      return;
+    }
+
+    controls.addEventListener('input', onInput);
+  }
+
+  function onInput(e) {
+    var target = e.target,
+      container = e.currentTarget;
+
+    if (target.tagName !== 'INPUT') {
+      return;
+    }
+
+    var values = getResizeControlsValue(container);
+    currentResizer.setConstraint(values[0], values[1], values[2]);
+  }
+
+  function getResizeControlsValue(el) {
+    var xValue = el.querySelector('#resize-x'),
+      yValue = el.querySelector('#resize-y'),
+      sideValue = el.querySelector('#resize-size');
+
+    return [Number(xValue.value), Number(yValue.value), Number(sideValue.value)];
   }
 
   setActiveFilter();
