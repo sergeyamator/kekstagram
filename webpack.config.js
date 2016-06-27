@@ -11,6 +11,8 @@ module.exports = {
 
   entry: './src/main.js',
 
+  devtool: 'inline-source-map',
+
   output: {
     filename: 'js/main.js',
     path: isDevelopmentVersion ? path.resolve(__dirname) : path.resolve(__dirname, 'build')

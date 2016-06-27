@@ -1,86 +1,14 @@
 'use strict';
 
-var PICTURES_LOAD_URL = '//o0.github.io/assets/json/pictures.json';
+var common = require('./common'),
+  utils = require('./utils'),
+  renderPictures = require('./renderPictures'),
+  filter = require('./filter');
 
 var DEFAULT_FILTER = 'filter-new';
 
 /** @constant {number} */
 var THROTTLE_DELAY = 100;
-
-/** @constant {number} */
-var PAGE_SIZE = 12;
-
-/** @type {number} */
-var pageNumber = 0;
-
-/** @type {number} */
-var renderedPictureCount = 0;
-
-/** @type {Array.<Object>} */
-var filteredPictures = [];
-
-var filters = document.querySelector('.filters'),
-  pictureContainer = document.querySelector('.pictures'),
-  pictureTmpl = document.querySelector('#picture-template'),
-  elementToClone = null;
-
-filters.classList.add('hidden');
-
-/**
- * Проверяем поддерживает ли браузер тег template
- * @returns {boolean}
- */
-function supportsTemplate() {
-  return 'content' in document.createElement('template');
-}
-
-/**
- * @param {Object} data
- * @param {HTMLElement} container
- * @return {HTMLElement}
- */
-function getPictureElement(data, container) {
-  var element = elementToClone.cloneNode(true),
-    img = new Image(182, 182);
-
-  img.addEventListener('load', successCallback);
-
-  img.addEventListener('error', errorCallback);
-
-  img.src = data.url;
-  element.querySelector('.picture-comments').textContent = data.comments;
-  element.querySelector('.picture-likes').textContent = data.likes;
-
-  container.appendChild(element);
-  return element;
-
-  function successCallback() {
-    element.insertBefore(img, element.querySelector('.picture-stats'));
-    onLoadEndCallback();
-  }
-
-  function errorCallback() {
-    element.classList.add('picture-load-failure');
-    onLoadEndCallback();
-  }
-
-  function onLoadEndCallback() {
-    renderedPictureCount++;
-
-    if (renderedPictureCount === PAGE_SIZE) {
-      if (isBottom()) {
-        renderPictures(filteredPictures, pageNumber, false);
-        renderedPictureCount = 0;
-      }
-    }
-  }
-}
-
-if (supportsTemplate()) {
-  elementToClone = pictureTmpl.content.querySelector('.picture');
-} else {
-  elementToClone = pictureTmpl.querySelector('.picture');
-}
 
 /**
  *
@@ -102,7 +30,7 @@ function getPictures(callback) {
    */
   xhr.addEventListener('loadend', loadEndCallback);
 
-  xhr.open('GET', PICTURES_LOAD_URL);
+  xhr.open('GET', common.PICTURES_LOAD_URL);
   xhr.send();
 
   pictures.classList.add('pictures-loading');
@@ -111,7 +39,7 @@ function getPictures(callback) {
     var loadedData = JSON.parse(evt.target.response);
     callback(loadedData);
 
-    filters.classList.remove('hidden');
+    filter.getFilters().classList.remove('hidden');
   }
 
   function removePreloader() {
@@ -138,117 +66,33 @@ function isNextPageAvailable(pictures, page, pageSize) {
   return page < Math.ceil(pictures.length / pageSize);
 }
 
-/**
- *
- * @returns {boolean}
- */
-function isBottomReached() {
-  var GAP = 100,
-    footerElement = document.querySelector('footer'),
-    footerPosition = footerElement.getBoundingClientRect();
-
-  return footerPosition.top - window.innerHeight - GAP <= 0;
-}
 
 function setScrollEnabled() {
-  window.addEventListener('scroll', throttle(scrollHandler, THROTTLE_DELAY));
+  window.addEventListener('scroll', utils.throttle(scrollHandler, THROTTLE_DELAY));
 
   function scrollHandler() {
-    if (isBottomReached() &&
-      isNextPageAvailable(window.pictures, pageNumber, PAGE_SIZE)) {
-      pageNumber++;
-      renderPictures(filteredPictures, pageNumber, false);
+    if (utils.isBottomReached() &&
+      isNextPageAvailable(window.pictures, common.pageNumber, common.PAGE_SIZE)) {
+      common.pageNumber++;
+      renderPictures.render(common.filteredPictures, common.pageNumber, false);
     }
   }
 }
 
-function throttle(callback, limit) {
-  var wait = false;
-  return function() {
-    if (!wait) {
-      callback.call();
-      wait = true;
-      setTimeout(function() {
-        wait = false;
-      }, limit);
-    }
-  };
-}
+
 
 getPictures(function(loadedPictures) {
   window.pictures = loadedPictures;
-  setFiltraionEnabled();
+  filter.setFiltraionEnabled();
   setScrollEnabled();
-  setFilterEnabled(DEFAULT_FILTER);
+  filter.setFilterEnabled(DEFAULT_FILTER);
 });
 
-/**
- *
- * @param {Array.<Object>} pictures
- * @param {number} page
- * @param {boolean=} replace
- */
-function renderPictures(pictures, page, replace) {
-  if (replace) {
-    pictureContainer.innerHTML = '';
-  }
-
-  var from = page * PAGE_SIZE,
-    to = from + PAGE_SIZE,
-    pictureToLoad = pictures.slice(from, to);
-
-  pictureToLoad.forEach(function(picture) {
-    getPictureElement(picture, pictureContainer);
-  });
-
-}
-
-function isBottom() {
-  return window.innerHeight - document.querySelector('.pictures').offsetHeight > 0;
-}
-
-function setFiltraionEnabled() {
-  var filtersForm = document.querySelector('.filters');
-  pageNumber = 0;
-  renderPictures(filteredPictures, pageNumber);
-
-  filtersForm.addEventListener('change', function(evt) {
-    var currentElement = evt.target;
-    if (currentElement.tagName === 'INPUT') {
-      setFilterEnabled(currentElement.id);
-    }
-  });
-}
 
 
-/**
- *
- * @param {string} filter
- */
-function setFilterEnabled(filter) {
-  filteredPictures = getFilteredPictures(window.pictures, filter);
-  pageNumber = 0;
-  renderPictures(filteredPictures, pageNumber, true);
 
-  while (isBottom()) {
-    renderPictures(filteredPictures, pageNumber, false);
-  }
-}
+filter.setFiltraionEnabled();
 
-function getFilteredPictures(pictures, filter) {
-  var picturesToFilter = pictures.slice(0);
 
-  if (filter === 'filter-new') {
-    picturesToFilter.sort(function(a, b) {
-      return new Date(b.date) - new Date(a.date);
-    });
-  }
 
-  if (filter === 'filter-discussed') {
-    picturesToFilter.sort(function(a, b) {
-      return b.comments - a.comments;
-    });
-  }
 
-  return picturesToFilter;
-}
