@@ -1,3 +1,5 @@
+'use strict';
+
 module.exports = {
   /**
    * Проверяем поддерживает ли браузер тег template

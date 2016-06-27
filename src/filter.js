@@ -1,3 +1,5 @@
+'use strict';
+
 var renderPictures = require('./renderPictures'),
   common = require('./common'),
   utils = require('./utils');

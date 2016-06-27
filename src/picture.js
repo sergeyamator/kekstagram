@@ -1,8 +1,9 @@
 'use strict';
 
-var elementToClone = require('./elementToClone')(),
-  global = require('./common'),
-  utils = require('./utils');
+var elementToClone = require('./elementToClone')();
+var common = require('./common');
+var utils = require('./utils');
+var renderPictures = require('./renderPictures');
 
 /** @type {number} */
 var renderedPictureCount = 0;
@@ -20,9 +21,9 @@ function errorCallback(element) {
 function onLoadEndCallback() {
   renderedPictureCount++;
 
-  if (renderedPictureCount === global.PAGE_SIZE) {
+  if (renderedPictureCount === common.PAGE_SIZE) {
     if (utils.isBottom()) {
-      renderPictures(filteredPictures, common.pageNumber, false);
+      renderPictures.render(common.filteredPictures, common.pageNumber, false);
       renderedPictureCount = 0;
     }
   }
@@ -45,7 +46,7 @@ module.exports = {
     img.addEventListener('error', function() {
       errorCallback(element);
     });
- 
+
     img.src = data.url;
     element.querySelector('.picture-comments').textContent = data.comments;
     element.querySelector('.picture-likes').textContent = data.likes;
