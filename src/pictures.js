@@ -3,7 +3,8 @@
 var common = require('./common'),
   utils = require('./utils'),
   renderPictures = require('./renderPictures'),
-  filter = require('./filter');
+  filter = require('./filter'),
+  gallery = require('./gallery');
 
 var DEFAULT_FILTER = 'filter-new';
 
@@ -66,7 +67,6 @@ function isNextPageAvailable(pictures, page, pageSize) {
   return page < Math.ceil(pictures.length / pageSize);
 }
 
-
 function setScrollEnabled() {
   window.addEventListener('scroll', utils.throttle(scrollHandler, THROTTLE_DELAY));
 
@@ -79,8 +79,6 @@ function setScrollEnabled() {
   }
 }
 
-
-
 getPictures(function(loadedPictures) {
   window.pictures = loadedPictures;
   filter.setFiltraionEnabled();
@@ -88,11 +86,18 @@ getPictures(function(loadedPictures) {
   filter.setFilterEnabled(DEFAULT_FILTER);
 });
 
-
-
-
 filter.setFiltraionEnabled();
+document.addEventListener('click', showGallery);
 
+function showGallery(evt) {
+  var target = evt.target,
+    element = target.closest('.picture');
+
+  if (element) {
+    evt.preventDefault();
+    gallery.showGallery(1);
+  }
+}
 
 
 
