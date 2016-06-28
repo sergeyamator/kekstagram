@@ -14,7 +14,7 @@ function showGallery(index) {
 
   container.addEventListener('click', _onPhotoClick);
   container.addEventListener('click', destroyGallery);
-  container.addEventListener('keydown', _onDocumentKeyDown);
+  document.addEventListener('keydown', _onDocumentKeyDown);
 
   showPictureByIndex(index);
 }
@@ -23,7 +23,8 @@ function destroyGallery(evt) {
   if (!evt.target.closest('.gallery-overlay-preview')) {
     container.classList.add('invisible');
     container.removeEventListener('click', _onPhotoClick);
-    container.removeEventListener('keydown', _onDocumentKeyDown);
+    container.removeEventListener('click', destroyGallery);
+    document.removeEventListener('keydown', _onDocumentKeyDown);
   }
 }
 
@@ -35,7 +36,7 @@ function _onPhotoClick(evt) {
 
 function _onDocumentKeyDown(evt) {
   if (evt.keyCode === utils.keyCode.ESC) {
-    destroyGallery();
+    destroyGallery(evt);
   }
 }
 
