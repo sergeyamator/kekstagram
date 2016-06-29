@@ -14,22 +14,23 @@ function showGallery(index) {
   prevIndex = index;
   container.classList.remove('invisible');
   container.addEventListener('click', _onPhotoClick);
-  container.addEventListener('click', destroyGallery);
   document.addEventListener('keydown', _onDocumentKeyDown);
 
   showPictureByIndex(index);
 }
 
-function destroyGallery(evt) {
-  if (!evt.target.closest('.gallery-overlay-preview')) {
-    container.classList.add('invisible');
-    container.removeEventListener('click', _onPhotoClick);
-    container.removeEventListener('click', destroyGallery);
-    document.removeEventListener('keydown', _onDocumentKeyDown);
-  }
+function destroyGallery() {
+  container.classList.add('invisible');
+  container.removeEventListener('click', _onPhotoClick);
+  container.removeEventListener('click', destroyGallery);
+  document.removeEventListener('keydown', _onDocumentKeyDown);
 }
 
 function _onPhotoClick(evt) {
+  if (!evt.target.closest('.gallery-overlay-preview')) {
+    destroyGallery();
+  }
+
   if (evt.target.classList.contains('gallery-overlay-image')) {
     showPictureByIndex(++prevIndex);
   }
