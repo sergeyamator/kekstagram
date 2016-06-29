@@ -1,7 +1,7 @@
 'use strict';
 
-var common = require('./common'),
-  picture = require('./picture');
+var common = require('./common');
+var Photo = require('./photo');
 
 module.exports = {
   /**
@@ -21,8 +21,8 @@ module.exports = {
       pictureToLoad = pictures.slice(from, to);
 
     pictureToLoad.forEach(function(pictureElement) {
-      picture.getPictureElement(pictureElement, common.pictureContainer);
+      var photo = new Photo(pictureElement, common.pictureContainer);
+      photo.getPhotoElement();
     });
-
   }
 };
