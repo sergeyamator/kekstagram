@@ -1,10 +1,10 @@
 'use strict';
 
-var renderPictures = require('./renderPictures'),
-  common = require('./common'),
-  utils = require('./utils');
-
+var renderPictures = require('./renderPictures');
+var common = require('./common');
+var utils = require('./utils');
 var filters = document.querySelector('.filters');
+var gallery = require('./gallery');
 
 
 filters.classList.add('hidden');
@@ -48,6 +48,7 @@ module.exports = {
   setFilterEnabled: function(filter) {
     common.filteredPictures = this.getFilteredPictures(window.pictures, filter);
     common.pageNumber = 0;
+    gallery.savePictures(common.filteredPictures);
     renderPictures.render(common.filteredPictures, common.pageNumber, true, common.pictureContainer);
 
     while (utils.isBottom()) {

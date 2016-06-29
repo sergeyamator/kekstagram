@@ -584,3 +584,9 @@ button[disabled] {
   opacity: 0.5;
   cursor: auto;
 }
+
+.gallery-overlay-image {
+  min-height: 200px;
+  min-width: 200px;
+  cursor: pointer;
+}

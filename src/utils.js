@@ -40,6 +40,13 @@ module.exports = {
         }, limit);
       }
     };
+  },
+
+  /** @enum {number} */
+  keyCode: {
+    ENTER: 13,
+    ESC: 27,
+    SPACE: 32
   }
 };
 
