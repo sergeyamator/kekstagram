@@ -38,7 +38,7 @@ function _onPhotoClick(evt) {
 
 function _onDocumentKeyDown(evt) {
   if (evt.keyCode === utils.keyCode.ESC) {
-    destroyGallery(evt);
+    destroyGallery();
   }
 }
 
