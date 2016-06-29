@@ -91,11 +91,15 @@ document.addEventListener('click', showGallery);
 
 function showGallery(evt) {
   var target = evt.target,
-    element = target.closest('.picture');
+    element = target.closest('.picture'),
+    index = 0;
 
   if (element) {
     evt.preventDefault();
-    gallery.showGallery(1);
+
+    var nodeList = Array.prototype.slice.call( document.querySelector('.pictures').children );
+    index = nodeList.indexOf(element);
+    gallery.showGallery(index);
   }
 }
 
