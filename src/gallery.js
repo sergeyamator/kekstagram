@@ -3,15 +3,16 @@
 var utils = require('./utils');
 
 var data = null,
-  container = document.querySelector('.gallery-overlay');
+  container = document.querySelector('.gallery-overlay'),
+  prevIndex = null;
 
 function savePictures(pictures) {
   data = pictures;
 }
 
 function showGallery(index) {
+  prevIndex = index;
   container.classList.remove('invisible');
-
   container.addEventListener('click', _onPhotoClick);
   container.addEventListener('click', destroyGallery);
   document.addEventListener('keydown', _onDocumentKeyDown);
@@ -29,8 +30,8 @@ function destroyGallery(evt) {
 }
 
 function _onPhotoClick(evt) {
-  if (evt.target.classList.contains('.gallery-overlay-image')) {
-    showPictureByIndex(1);
+  if (evt.target.classList.contains('gallery-overlay-image')) {
+    showPictureByIndex(++prevIndex);
   }
 }
 
