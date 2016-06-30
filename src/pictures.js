@@ -4,7 +4,6 @@ var common = require('./common');
 var utils = require('./utils');
 var renderPictures = require('./renderPictures');
 var filter = require('./filter');
-var Photo = require('./photo');
 
 var DEFAULT_FILTER = '';
 
