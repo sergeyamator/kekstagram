@@ -21,7 +21,7 @@ module.exports = {
       pictureToLoad = pictures.slice(from, to);
 
     pictureToLoad.forEach(function(pictureElement) {
-      var photo = new Photo(pictureElement, common.pictureContainer);
+      var photo = new Photo(pictureElement, common.pictureContainer, pictures);
       photo.getPhotoElement();
     });
   }

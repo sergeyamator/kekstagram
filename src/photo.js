@@ -12,12 +12,19 @@ var renderedPictureCount = 0;
 /**
  *
  * @param {Object} data
+ * @param {Object} allData
  * @param {HTMLElement} container
  * @constructor
  */
-function Photo(data, container) {
+function Photo(data, container, allData) {
+  this.allData = allData;
   this.data = data;
   this.element = container;
+  this.img = null;
+  this.prevIndex = 0;
+  this.overlay = document.querySelector('.gallery-overlay');
+  this._onDocumentKeyDown = _onDocumentKeyDown.bind(this);
+  this._onPhotoClick = _onPhotoClick.bind(this);
 }
 
 var fn = Photo.prototype;
@@ -27,23 +34,57 @@ var fn = Photo.prototype;
  */
 
 fn.getPhotoElement = function() {
-  var element = elementToClone.cloneNode(true),
-    img = new Image(182, 182);
+  var element = elementToClone.cloneNode(true);
+  this.img = new Image(182, 182);
 
-  img.addEventListener('load', function() {
-    successCallback(element, img);
-  });
+  this.img.addEventListener('load', function() {
+    successCallback(element, this.img);
+  }.bind(this));
 
-  img.addEventListener('error', function() {
+  this.img.addEventListener('error', function() {
     errorCallback(element);
   });
 
-  img.src = this.data.url;
+  this.img.src = this.data.url;
   element.querySelector('.picture-comments').textContent = this.data.comments;
   element.querySelector('.picture-likes').textContent = this.data.likes;
 
   this.element.appendChild(element);
+  this.img.addEventListener('click', this.showGallery.bind(this));
+
   return element;
+};
+
+fn.showGallery = function(e) {
+  e.preventDefault();
+  this.prevIndex = getIndex(document.querySelector('.pictures'), this.img.closest('.picture'));
+  this.overlay.classList.remove('invisible');
+  this.overlay.addEventListener('click', this._onPhotoClick);
+  document.addEventListener('keydown', this._onDocumentKeyDown);
+  this.showPicture();
+};
+
+fn.removeGallery = function() {
+  this.overlay.classList.add('invisible');
+  this.overlay.removeEventListener('click', this._onPhotoClick);
+  this.overlay.removeEventListener('click', this.removeGallery);
+  document.removeEventListener('keydown', this._onDocumentKeyDown);
+};
+
+fn.showPicture = function(index) {
+  var picture = this.overlay.querySelector('.gallery-overlay-image'),
+    commentElement = this.overlay.querySelector('.comments-count'),
+    likesElement = this.overlay.querySelector('.likes-count');
+
+  var data = this.allData[index] || this.data;
+  picture.src = data.url;
+
+  this.setCount(commentElement, data.comments);
+  this.setCount(likesElement, data.likes);
+};
+
+fn.setCount = function(element, count) {
+  element.textContent = count;
 };
 
 function onLoadEndCallback() {
@@ -65,6 +106,29 @@ function successCallback(element, img) {
 function errorCallback(element) {
   element.classList.add('picture-load-failure');
   onLoadEndCallback();
+}
+
+function _onPhotoClick(evt) {
+  if (!evt.target.closest('.gallery-overlay-preview')) {
+    this.removeGallery();
+  }
+
+  if (evt.target.classList.contains('gallery-overlay-image')) {
+    this.showPicture(++this.prevIndex);
+  }
+}
+
+function _onDocumentKeyDown(evt) {
+  if (evt.keyCode === utils.keyCode.ESC) {
+    this.removeGallery();
+  }
+}
+
+function getIndex(node, el) {
+  var nodeList = Array.prototype.slice.call(node.children),
+    index = nodeList.indexOf(el);
+
+  return index;
 }
 
 module.exports = Photo;
