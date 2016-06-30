@@ -14,6 +14,7 @@ module.exports = {
   render: function(pictures, page, replace, pictureContainer) {
     if (replace) {
       pictureContainer.innerHTML = '';
+      common.renderedPictures = [];
     }
 
     var from = page * common.PAGE_SIZE,

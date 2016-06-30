@@ -1,7 +1,6 @@
 'use strict';
 
 var elementToClone = require('./elementToClone')();
-
 var common = require('./common');
 var utils = require('./utils');
 var renderPictures = require('./renderPictures');
@@ -51,17 +50,19 @@ fn.getPhotoElement = function() {
 
   this.element.appendChild(element);
   this.img.addEventListener('click', this.showGallery.bind(this));
-
+  common.renderedPictures.push(this.data);
   return element;
 };
 
 fn.showGallery = function(e) {
+  var target = e.target;
+
   e.preventDefault();
-  this.prevIndex = getIndex(document.querySelector('.pictures'), this.img.closest('.picture'));
+  this.prevIndex = getIndex(document.querySelector('.pictures'), target.closest('.picture'));
   this.overlay.classList.remove('invisible');
   this.overlay.addEventListener('click', this._onPhotoClick);
   document.addEventListener('keydown', this._onDocumentKeyDown);
-  this.showPicture();
+  this.showPicture(this.prevIndex);
 };
 
 fn.removeGallery = function() {
@@ -76,7 +77,7 @@ fn.showPicture = function(index) {
     commentElement = this.overlay.querySelector('.comments-count'),
     likesElement = this.overlay.querySelector('.likes-count');
 
-  var data = this.allData[index] || this.data;
+  var data = common.renderedPictures[index] || this.data;
   picture.src = data.url;
 
   this.setCount(commentElement, data.comments);
