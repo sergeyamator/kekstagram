@@ -1,12 +1,11 @@
 'use strict';
 
-var common = require('./common'),
-  utils = require('./utils'),
-  renderPictures = require('./renderPictures'),
-  filter = require('./filter'),
-  gallery = require('./gallery');
+var common = require('./common');
+var utils = require('./utils');
+var renderPictures = require('./renderPictures');
+var filter = require('./filter');
 
-var DEFAULT_FILTER = 'filter-new';
+var DEFAULT_FILTER = '';
 
 /** @constant {number} */
 var THROTTLE_DELAY = 100;
@@ -87,21 +86,6 @@ getPictures(function(loadedPictures) {
 });
 
 filter.setFiltraionEnabled();
-document.addEventListener('click', showGallery);
-
-function showGallery(evt) {
-  var target = evt.target,
-    element = target.closest('.picture'),
-    index = 0;
-
-  if (element) {
-    evt.preventDefault();
-
-    var nodeList = Array.prototype.slice.call( document.querySelector('.pictures').children );
-    index = nodeList.indexOf(element);
-    gallery.showGallery(index);
-  }
-}
 
 
 
