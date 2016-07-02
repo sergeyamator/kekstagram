@@ -2,7 +2,7 @@
 
 var common = require('./common');
 var Photo = require('./photo');
-
+var Gallery = require('./gallery');
 module.exports = {
   /**
    *
@@ -25,5 +25,7 @@ module.exports = {
       var photo = new Photo(pictureElement, common.pictureContainer, pictures);
       photo.getPhotoElement();
     });
+
+    var gallery = new Gallery();
   }
 };
