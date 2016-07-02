@@ -18,7 +18,6 @@ function _setCheckedFilter(el) {
     }
   }
 
-  debugger;
   checkedFilter.setAttribute('checked', true);
 }
 
