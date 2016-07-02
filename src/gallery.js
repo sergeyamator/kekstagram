@@ -14,7 +14,7 @@ Gallery.prototype.show = function(e) {
   var target = e.target;
 
   e.preventDefault();
-  this.prevIndex = _getIndex(document.querySelector('.pictures'), target.closest('.picture'));
+  this.prevIndex = common.getIndex(document.querySelector('.pictures'), target.closest('.picture'));
   this.overlay.classList.remove('invisible');
   this.overlay.addEventListener('click', this._onPhotoClick);
   document.addEventListener('keydown', this._onDocumentKeyDown);
@@ -43,13 +43,6 @@ Gallery.prototype.showPicture = function(index) {
 Gallery.prototype.setCount = function(element, count) {
   element.textContent = count;
 };
-
-function _getIndex(node, el) {
-  var nodeList = Array.prototype.slice.call(node.children),
-    index = nodeList.indexOf(el);
-
-  return index;
-}
 
 function _onPhotoClick(evt) {
   if (!evt.target.closest('.gallery-overlay-preview')) {
