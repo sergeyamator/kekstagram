@@ -7,11 +7,27 @@ var filters = document.querySelector('.filters');
 
 filters.classList.add('hidden');
 
+function _setCheckedFilter(el) {
+  var inputs = el.querySelectorAll('input'),
+    checkedFilter = 'filter-popular',
+    filter = localStorage.getItem('filter');
+
+  for (var i = 0; i < inputs.length; i++) {
+    if (inputs[i].id.indexOf(filter) !== -1) {
+      checkedFilter = inputs[i];
+    }
+  }
+
+  checkedFilter.setAttribute('checked', true);
+}
+
 module.exports = {
   setFiltraionEnabled: function() {
     var filtersForm = document.querySelector('.filters');
     common.pageNumber = 0;
     renderPictures.render(common.filteredPictures, common.pageNumber, null, common.pictureContainer);
+
+    _setCheckedFilter(filters);
 
     filtersForm.addEventListener('change', function(evt) {
       var currentElement = evt.target;
@@ -28,12 +44,16 @@ module.exports = {
       picturesToFilter.sort(function(a, b) {
         return new Date(b.date) - new Date(a.date);
       });
-    }
 
-    if (filter === 'filter-discussed') {
+      localStorage.setItem('filter', 'filter-new');
+    } else if (filter === 'filter-discussed') {
       picturesToFilter.sort(function(a, b) {
         return b.comments - a.comments;
       });
+
+      localStorage.setItem('filter', 'filter-discussed');
+    } else {
+      localStorage.setItem('filter', 'filter-popular');
     }
 
     return picturesToFilter;
