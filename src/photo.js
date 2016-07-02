@@ -51,6 +51,7 @@ fn.getPhotoElement = function() {
   this.element.appendChild(element);
   this.img.addEventListener('click', this.showGallery.bind(this));
   common.renderedPictures.push(this.data);
+
   return element;
 };
 
