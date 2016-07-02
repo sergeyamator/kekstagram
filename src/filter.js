@@ -10,7 +10,7 @@ filters.classList.add('hidden');
 function _setCheckedFilter(el) {
   var inputs = el.querySelectorAll('input'),
     checkedFilter = 'filter-popular',
-    filter = localStorage.getItem('filter');
+    filter = localStorage.getItem('filter') || 'filter-popular';
 
   for (var i = 0; i < inputs.length; i++) {
     if (inputs[i].id.indexOf(filter) !== -1) {
@@ -18,6 +18,7 @@ function _setCheckedFilter(el) {
     }
   }
 
+  debugger;
   checkedFilter.setAttribute('checked', true);
 }
 
