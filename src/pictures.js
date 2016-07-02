@@ -5,7 +5,7 @@ var utils = require('./utils');
 var renderPictures = require('./renderPictures');
 var filter = require('./filter');
 
-var DEFAULT_FILTER = '';
+var DEFAULT_FILTER = localStorage.getItem('filter') || '';
 
 /** @constant {number} */
 var THROTTLE_DELAY = 100;
