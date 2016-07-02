@@ -23,13 +23,11 @@ function Photo(data, container) {
   this.prevIndex = 0;
 }
 
-var fn = Photo.prototype;
-
 /**
  * @return {HTMLElement}
  */
 
-fn.getPhotoElement = function() {
+Photo.prototype.getPhotoElement = function() {
   var element = elementToClone.cloneNode(true);
   this.img = new Image(182, 182);
 
@@ -47,7 +45,7 @@ fn.getPhotoElement = function() {
 
   this.element.appendChild(element);
   var gallery = new Gallery();
-  this.img.addEventListener('click', gallery.showGallery.bind(gallery));
+  this.img.addEventListener('click', gallery.show.bind(gallery));
   common.renderedPictures.push(this.data);
   return element;
 };

@@ -10,9 +10,7 @@ function Gallery() {
   this._onPhotoClick = _onPhotoClick.bind(this);
 }
 
-var fn = Gallery.prototype;
-
-fn.showGallery = function(e) {
+Gallery.prototype.show = function(e) {
   var target = e.target;
 
   e.preventDefault();
@@ -23,14 +21,14 @@ fn.showGallery = function(e) {
   this.showPicture(this.prevIndex);
 };
 
-fn.removeGallery = function() {
+Gallery.prototype.remove = function() {
   this.overlay.classList.add('invisible');
   this.overlay.removeEventListener('click', this._onPhotoClick);
   this.overlay.removeEventListener('click', this.removeGallery);
   document.removeEventListener('keydown', this._onDocumentKeyDown);
 };
 
-fn.showPicture = function(index) {
+Gallery.prototype.showPicture = function(index) {
   var picture = this.overlay.querySelector('.gallery-overlay-image'),
     commentElement = this.overlay.querySelector('.comments-count'),
     likesElement = this.overlay.querySelector('.likes-count');
@@ -42,7 +40,7 @@ fn.showPicture = function(index) {
   this.setCount(likesElement, data.likes);
 };
 
-fn.setCount = function(element, count) {
+Gallery.prototype.setCount = function(element, count) {
   element.textContent = count;
 };
 
@@ -55,7 +53,7 @@ function _getIndex(node, el) {
 
 function _onPhotoClick(evt) {
   if (!evt.target.closest('.gallery-overlay-preview')) {
-    this.removeGallery();
+    this.remove();
   }
 
   if (evt.target.classList.contains('gallery-overlay-image')) {
@@ -65,7 +63,7 @@ function _onPhotoClick(evt) {
 
 function _onDocumentKeyDown(evt) {
   if (evt.keyCode === utils.keyCode.ESC) {
-    this.removeGallery();
+    this.remove();
   }
 }
 
