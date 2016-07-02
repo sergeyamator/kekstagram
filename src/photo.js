@@ -47,6 +47,7 @@ Photo.prototype.getPhotoElement = function() {
   var gallery = new Gallery();
   this.img.addEventListener('click', gallery.show.bind(gallery));
   common.renderedPictures.push(this.data);
+
   return element;
 };
 
