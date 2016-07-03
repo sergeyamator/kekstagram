@@ -5,6 +5,7 @@ var common = require('./common');
 var utils = require('./utils');
 var renderPictures = require('./renderPictures');
 var Gallery = require('./gallery');
+var gallery = null;
 
 /** @type {number} */
 var renderedPictureCount = 0;
@@ -44,8 +45,8 @@ Photo.prototype.getPhotoElement = function() {
   element.querySelector('.picture-likes').textContent = this.data.likes;
 
   this.element.appendChild(element);
-  var gallery = new Gallery();
-  this.img.addEventListener('click', gallery.show.bind(gallery));
+  gallery = new Gallery();
+  this.img.addEventListener('click', setHashPath);
   common.renderedPictures.push(this.data);
 
   return element;
@@ -59,6 +60,8 @@ function onLoadEndCallback() {
       renderPictures.render(common.filteredPictures, common.pageNumber, false);
       renderedPictureCount = 0;
     }
+
+    gallery.togglePhoto()
   }
 }
 
@@ -72,5 +75,8 @@ function errorCallback(element) {
   onLoadEndCallback();
 }
 
-
+function setHashPath(e) {
+  e.preventDefault();
+  location.hash = e.target.getAttribute('src');
+}
 module.exports = Photo;
