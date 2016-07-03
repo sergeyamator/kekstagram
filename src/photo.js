@@ -61,7 +61,7 @@ function onLoadEndCallback() {
       renderedPictureCount = 0;
     }
 
-    gallery.togglePhoto()
+    gallery.togglePhoto();
   }
 }
 
