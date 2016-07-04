@@ -56,7 +56,6 @@ Gallery.prototype.showPicture = function(index) {
 };
 
 Gallery.prototype.togglePhoto = function() {
-  console.log('TODO');
   if (location.hash.match(REG_EXP)) {
     var hash = location.hash;
     hash = hash.substr(1);

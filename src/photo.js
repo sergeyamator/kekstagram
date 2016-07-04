@@ -5,7 +5,7 @@ var common = require('./common');
 var utils = require('./utils');
 var renderPictures = require('./renderPictures');
 var Gallery = require('./gallery');
-var gallery = null;
+var gallery = new Gallery();
 
 /** @type {number} */
 var renderedPictureCount = 0;
@@ -45,7 +45,7 @@ Photo.prototype.getPhotoElement = function() {
   element.querySelector('.picture-likes').textContent = this.data.likes;
 
   this.element.appendChild(element);
-  gallery = new Gallery();
+
   this.img.addEventListener('click', setHashPath);
   common.renderedPictures.push(this.data);
 
