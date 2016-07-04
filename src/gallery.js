@@ -33,24 +33,22 @@ Gallery.prototype.showPicture = function(index) {
   var picture = this.overlay.querySelector('.gallery-overlay-image'),
     commentElement = this.overlay.querySelector('.comments-count'),
     likesElement = this.overlay.querySelector('.likes-count'),
-    data = null,
-    that = this;
+    data = null;
 
   if (typeof index === 'string') {
     common.renderedPictures.forEach(function(item, count, arr) {
       if (index === item.url) {
         data = item;
-        that.next = arr[++count];
+        this.next = arr[++count];
       }
-    });
+    }.bind(this));
   } else {
     data = common.renderedPictures[index] || this.data;
   }
 
   if (data) {
     picture.src = data.url;
-    this.setCount(commentElement, data.comments);
-    this.setCount(likesElement, data.likes);
+    this.setCount(commentElement, data.comments, likesElement, data.likes);
     this.show();
   }
 };
@@ -65,7 +63,17 @@ Gallery.prototype.togglePhoto = function() {
   }
 };
 
-Gallery.prototype.setCount = function(element, count) {
+
+Gallery.prototype.setCount = function(commentElement, comment, likesElement, likes) {
+  this.setComments(commentElement, comment);
+  this.setLikes(likesElement, likes);
+};
+
+Gallery.prototype.setComments = function(element, count) {
+  element.textContent = count;
+};
+
+Gallery.prototype.setLikes = function(element, count) {
   element.textContent = count;
 };
 
