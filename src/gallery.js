@@ -5,34 +5,49 @@ var utils = require('./utils');
 
 var REG_EXP = /#photos\/(\S+)/;
 
+/**
+ * Функция конструктор галлереии
+ * @constructor
+ */
 function Gallery() {
   this.overlay = document.querySelector('.gallery-overlay');
-
   this._onDocumentKeyDown = _onDocumentKeyDown.bind(this);
   this._onPhotoClick = _onPhotoClick.bind(this);
   this.next = null;
+
   window.addEventListener('hashchange', this.togglePhoto.bind(this));
 }
 
 Gallery.prototype.show = function() {
   this.overlay.classList.remove('invisible');
   this.overlay.addEventListener('click', this._onPhotoClick);
-  document.addEventListener('keydown', this._onDocumentKeyDown);
   this.showPicture(this.prevIndex);
+
+  document.addEventListener('keydown', this._onDocumentKeyDown);
 };
 
+/**
+ * В случае ненадобности закрываем галлерею,
+ * а также удаляем все обработчики события, котрые
+ * повешаны на нее
+ */
 Gallery.prototype.remove = function() {
   this.overlay.classList.add('invisible');
   this.overlay.removeEventListener('click', this._onPhotoClick);
   this.overlay.removeEventListener('click', this.removeGallery);
+
   document.removeEventListener('keydown', this._onDocumentKeyDown);
   history.pushState(null, null, window.location.pathname);
 };
 
+/**
+ * Отображаем галлерею. Если был передан аргумент - строка,
+ * содержащая путь к картинке - тогда первой отобразиться
+ * указанная картинка
+ * @param {String} index
+ */
 Gallery.prototype.showPicture = function(index) {
   var picture = this.overlay.querySelector('.gallery-overlay-image'),
-    commentElement = this.overlay.querySelector('.comments-count'),
-    likesElement = this.overlay.querySelector('.likes-count'),
     data = null;
 
   if (typeof index === 'string') {
@@ -48,11 +63,16 @@ Gallery.prototype.showPicture = function(index) {
 
   if (data) {
     picture.src = data.url;
-    this.setCount(commentElement, data.comments, likesElement, data.likes);
+    this.setComments(data.comments);
+    this.setLikes(data.likes);
     this.show();
   }
 };
 
+/**
+ * Переключаем на фотографию, указанную в адресной строке.
+ * Если эта строка не проходит проверку - закрываем галлерею.
+ */
 Gallery.prototype.togglePhoto = function() {
   if (location.hash.match(REG_EXP)) {
     var hash = location.hash;
@@ -63,20 +83,40 @@ Gallery.prototype.togglePhoto = function() {
   }
 };
 
-
-Gallery.prototype.setCount = function(commentElement, comment, likesElement, likes) {
-  this.setComments(commentElement, comment);
-  this.setLikes(likesElement, likes);
+/**
+ * Устанавливаем переданную data в качестве
+ * значения строки элемента
+ * @param {HTMLElement} element
+ * @param data
+ */
+Gallery.prototype.setCounts = function(element, data) {
+  element.textContent = data;
 };
 
-Gallery.prototype.setComments = function(element, count) {
-  element.textContent = count;
+/**
+ * Сетим количество комментариев для элемента
+ * @param {Number} data
+ */
+Gallery.prototype.setComments = function(data) {
+  var commentElement = this.overlay.querySelector('.comments-count');
+  this.setCounts(commentElement, data);
 };
 
-Gallery.prototype.setLikes = function(element, count) {
-  element.textContent = count;
+/**
+ * Сетим количество лайков для элемента
+ * @param {Number} data
+ */
+Gallery.prototype.setLikes = function(data) {
+  var likesElement = this.overlay.querySelector('.likes-count');
+  this.setCounts(likesElement, data);
 };
 
+/**
+ * По клику на фотографию достаем следующую фотографию и
+ * ее путь сетим в качестве параметра url
+ * @param {MouseEvent} evt
+ * @private
+ */
 function _onPhotoClick(evt) {
   if (!evt.target.closest('.gallery-overlay-preview')) {
     this.remove();
@@ -87,6 +127,11 @@ function _onPhotoClick(evt) {
   }
 }
 
+/**
+ * По клику на клавишу escape закрываем галлерею
+ * @param {KeyboardEvent} evt
+ * @private
+ */
 function _onDocumentKeyDown(evt) {
   if (evt.keyCode === utils.keyCode.ESC) {
     this.remove();

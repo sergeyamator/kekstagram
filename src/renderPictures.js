@@ -5,13 +5,14 @@ var Photo = require('./photo');
 
 module.exports = {
   /**
-   *
+   * Отрисовка картинок по этапно (по странично)
    * @param {Array.<Object>} pictures
    * @param {number} page
    * @param {boolean=} replace
    * @param {HTMLElement} pictureContainer
    */
   render: function(pictures, page, replace, pictureContainer) {
+    // Если replace true, тогда удаляем все отрисованные изображения
     if (replace) {
       pictureContainer.innerHTML = '';
       common.renderedPictures = [];

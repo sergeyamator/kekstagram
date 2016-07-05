@@ -252,8 +252,7 @@
     },
 
     /**
-     * Удаление. Убирает контейнер из родительского элемента, убирает
-     * все обработчики событий и убирает ссылки.
+     * Удаление. Убирает контейнер из родительского элемента, убирает все обработчики событий и убирает ссылки.
      */
     remove: function() {
       this._element.removeChild(this._container);
@@ -263,26 +262,21 @@
     },
 
     /**
-     * Экспорт обрезанного изображения как HTMLImageElement и исходником
-     * картинки в src в формате dataURL.
+     * Экспорт обрезанного изображения как HTMLImageElement и исходником картинки в src в формате dataURL.
      * @return {Image}
      */
     exportImage: function() {
       // Создаем Image, с размерами, указанными при кадрировании.
       var imageToExport = new Image();
 
-      // Создается новый canvas, по размерам совпадающий с кадрированным
-      // изображением, в него добавляется изображение взятое из канваса
-      // с измененными координатами и сохраняется в dataURL, с помощью метода
-      // toDataURL. Полученный исходный код, записывается в src у ранее
-      // созданного изображения.
+      // Создается новый canvas, по размерам совпадающий с кадрированным изображением, в него добавляется
+      // изображение взятое из канваса с измененными координатами и сохраняется в dataURL, с помощью метода
+      // toDataURL. Полученный исходный код, записывается в src у ранее созданного изображения.
       var temporaryCanvas = document.createElement('canvas');
       var temporaryCtx = temporaryCanvas.getContext('2d');
       temporaryCanvas.width = this._resizeConstraint.side;
       temporaryCanvas.height = this._resizeConstraint.side;
-      temporaryCtx.drawImage(this._image,
-          -this._resizeConstraint.x,
-          -this._resizeConstraint.y);
+      temporaryCtx.drawImage(this._image, -this._resizeConstraint.x, -this._resizeConstraint.y);
       imageToExport.src = temporaryCanvas.toDataURL('image/png');
 
       return imageToExport;

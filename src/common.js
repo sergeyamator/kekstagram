@@ -1,8 +1,15 @@
 'use strict';
 
-function _getIndex(node, el) {
+/**
+ *
+ * @param {HTMLElement} node
+ * @param {HTMLElement} element
+ * @returns {number} index
+ * @private
+ */
+function _getIndex(node, element) {
   var nodeList = Array.prototype.slice.call(node.children),
-    index = nodeList.indexOf(el);
+    index = nodeList.indexOf(element);
 
   return index;
 }

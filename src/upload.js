@@ -1,3 +1,5 @@
+'use strict';
+
 /* global Resizer: true */
 
 /**
@@ -5,7 +7,6 @@
  * @author Igor Alexeenko (o0)
  */
 
-'use strict';
 var browserCookies = require('browser-cookies');
 
 (function() {
@@ -75,9 +76,13 @@ var browserCookies = require('browser-cookies');
     resizeYField = form.querySelector('#resize-y'),
     resizeSize = form.querySelector('#resize-size');
 
-  for (var i = 0; i < inputs.length; i++) {
-    inputs[i].addEventListener('input', blockSubmitIfNotValid);
-  }
+  [].forEach.call(inputs, function(item) {
+    item.addEventListener('input', function() {
+      blockSubmitIfNotValid();
+      showError(item);
+    });
+  });
+
   /**
    * Проверяет, валидны ли данные, в форме кадрирования.
    * @return {boolean}
@@ -99,11 +104,36 @@ var browserCookies = require('browser-cookies');
     }
   }
 
+  /**
+   * Блокируем кнопку отправки или нет в зависимости от того
+   * проходил ли форма валидацию или нет
+   */
   function blockSubmitIfNotValid() {
     if (!resizeFormIsValid()) {
       submitButton.setAttribute('disabled', 'true');
     } else {
       submitButton.removeAttribute('disabled');
+    }
+  }
+
+  /**
+   * Если поле не проходит html5 валидацию
+   * показываем ошибку с текстом валидации
+   * @param {HTMLElement} input
+   */
+  function showError(input) {
+    if (!input.validity.valid) {
+      var div = document.createElement('div');
+      div.classList.add('controls-error');
+      div.textContent = input.validationMessage;
+      document.body.appendChild(div);
+
+      div.addEventListener('click', closeError);
+      div.removeEventListener('click', closeError);
+    }
+
+    function closeError() {
+      document.body.removeChild(div);
     }
   }
 
@@ -348,9 +378,9 @@ var browserCookies = require('browser-cookies');
     controls.addEventListener('input', onInput);
   }
 
-  function onInput(e) {
-    var target = e.target,
-      container = e.currentTarget;
+  function onInput(evt) {
+    var target = evt.target,
+      container = evt.currentTarget;
 
     if (target.tagName !== 'INPUT') {
       return;
