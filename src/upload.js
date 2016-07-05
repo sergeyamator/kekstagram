@@ -127,13 +127,12 @@ var browserCookies = require('browser-cookies');
       div.classList.add('controls-error');
       div.textContent = input.validationMessage;
       document.body.appendChild(div);
-
       div.addEventListener('click', closeError);
-      div.removeEventListener('click', closeError);
     }
 
     function closeError() {
       document.body.removeChild(div);
+      div.removeEventListener('click', closeError);
     }
   }
 
