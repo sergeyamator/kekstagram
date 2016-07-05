@@ -13,6 +13,5 @@ module.exports = {
   filteredPictures: [],
   renderedPictures: [],
   pictureContainer: document.querySelector('.pictures'),
-  pictureNumber: 0,
   getIndex: _getIndex
 };
