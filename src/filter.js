@@ -7,73 +7,100 @@ var filters = document.querySelector('.filters');
 
 filters.classList.add('hidden');
 
-function _setCheckedFilter(el) {
-  var inputs = el.querySelectorAll('input'),
+/**
+ * Делаем активный фильтр при загрузке странички
+ * @param {HTMLElement} element
+ * @private
+ */
+function _setCheckedFilter(element) {
+  var inputs = element.querySelectorAll('input'),
     checkedFilter = 'filter-popular',
     filter = localStorage.getItem('filter') || 'filter-popular';
 
-  for (var i = 0; i < inputs.length; i++) {
-    if (inputs[i].id.indexOf(filter) !== -1) {
-      checkedFilter = inputs[i];
+  [].forEach.call(inputs, function(item) {
+    if (item.id.indexOf(filter) !== -1) {
+      checkedFilter = item;
     }
-  }
+  });
 
   checkedFilter.setAttribute('checked', true);
 }
 
-module.exports = {
-  setFiltraionEnabled: function() {
-    var filtersForm = document.querySelector('.filters');
-    common.pageNumber = 0;
-    renderPictures.render(common.filteredPictures, common.pageNumber, null, common.pictureContainer);
+/**
+ * Функция перерисовки изображений при
+ * переключении фильтра
+ */
+function setFiltraionEnabled() {
+  common.pageNumber = 0;
+  renderPictures.render(common.filteredPictures, common.pageNumber, null, common.pictureContainer);
 
-    _setCheckedFilter(filters);
+  _setCheckedFilter(filters);
 
-    filtersForm.addEventListener('change', function(evt) {
-      var currentElement = evt.target;
-      if (currentElement.tagName === 'INPUT') {
-        this.setFilterEnabled(currentElement.id);
-      }
-    }.bind(this));
-  },
-
-  getFilteredPictures: function(pictures, filter) {
-    var picturesToFilter = pictures.slice(0);
-
-    if (filter === 'filter-new') {
-      picturesToFilter.sort(function(a, b) {
-        return new Date(b.date) - new Date(a.date);
-      });
-
-      localStorage.setItem('filter', 'filter-new');
-    } else if (filter === 'filter-discussed') {
-      picturesToFilter.sort(function(a, b) {
-        return b.comments - a.comments;
-      });
-
-      localStorage.setItem('filter', 'filter-discussed');
-    } else {
-      localStorage.setItem('filter', 'filter-popular');
+  filters.addEventListener('change', function(evt) {
+    var currentElement = evt.target;
+    if (currentElement.tagName === 'INPUT') {
+      this.setFilterEnabled(currentElement.id);
     }
+  }.bind(this));
+}
 
-    return picturesToFilter;
-  },
+/**
+ * Фильтруем список всех фотографий
+ * с учетом выбранного фильтра
+ * @param {Array} pictures
+ * @param {String} filter
+ * @returns {Array.<T>|*|ArrayBuffer|string|Blob}
+ */
+function getFilteredPictures(pictures, filter) {
+  var picturesToFilter = pictures.slice(0);
 
-  /**
-   *
-   * @param {string} filter
-   */
-  setFilterEnabled: function(filter) {
-    common.filteredPictures = this.getFilteredPictures(window.pictures, filter);
-    common.pageNumber = 0;
-    renderPictures.render(common.filteredPictures, common.pageNumber, true, common.pictureContainer);
+  if (filter === 'filter-new') {
+    picturesToFilter.sort(function(a, b) {
+      return new Date(b.date) - new Date(a.date);
+    });
 
-    while (utils.isBottom()) {
-      renderPictures.render(common.filteredPictures, common.pageNumber, false, common.pictureContainer);
-    }
-  },
+    localStorage.setItem('filter', 'filter-new');
+  } else if (filter === 'filter-discussed') {
+    picturesToFilter.sort(function(a, b) {
+      return b.comments - a.comments;
+    });
 
-  getFilters: function() {
-    return filters;
+    localStorage.setItem('filter', 'filter-discussed');
+  } else {
+    localStorage.setItem('filter', 'filter-popular');
   }
+
+  return picturesToFilter;
+}
+
+/**
+ * Отрисовываем отфильтрованные изображения
+ * @param {string} filter
+ */
+function setFilterEnabled(filter) {
+  common.filteredPictures = this.getFilteredPictures(window.pictures, filter);
+  common.pageNumber = 0;
+  renderPictures.render(common.filteredPictures, common.pageNumber, true, common.pictureContainer);
+
+  while (utils.isBottom()) {
+    renderPictures.render(common.filteredPictures, common.pageNumber, false, common.pictureContainer);
+  }
+}
+
+/**
+ * Возвращаем блок с фильтрами
+ * @returns {Element}
+ */
+function getFilters() {
+  return filters;
+}
+
+module.exports = {
+  setFiltraionEnabled: setFiltraionEnabled,
+
+  getFilteredPictures: getFilteredPictures,
+
+  setFilterEnabled: setFilterEnabled,
+
+  getFilters: getFilters
 };

@@ -10,9 +10,8 @@ var gallery = new Gallery();
 /** @type {number} */
 var renderedPictureCount = 0;
 
-
 /**
- *
+ * Конструктор, который создает превьюшку
  * @param {Object} data
  * @param {HTMLElement} container
  * @constructor
@@ -25,6 +24,7 @@ function Photo(data, container) {
 }
 
 /**
+ * Функция создания одной превьюхи
  * @return {HTMLElement}
  */
 
@@ -65,18 +65,33 @@ function onLoadEndCallback() {
   }
 }
 
+/**
+ * При успешной загрузке изображения - добавляем ее на страничку
+ * @param element
+ * @param img
+ */
 function successCallback(element, img) {
   element.insertBefore(img, element.querySelector('.picture-stats'));
   onLoadEndCallback();
 }
 
+/**
+ * При ошибке - вешаем класс ошибки
+ * @param element
+ */
 function errorCallback(element) {
   element.classList.add('picture-load-failure');
   onLoadEndCallback();
 }
 
-function setHashPath(e) {
-  e.preventDefault();
-  location.hash = e.target.getAttribute('src');
+/**
+ * По клику на преьюшку сетим путь к картинке
+ * в качестве хеш параметра  url
+ * @param {MouseEvent} evt
+ */
+function setHashPath(evt) {
+  evt.preventDefault();
+  location.hash = evt.target.getAttribute('src');
 }
+
 module.exports = Photo;
